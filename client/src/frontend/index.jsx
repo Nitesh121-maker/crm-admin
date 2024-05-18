@@ -125,6 +125,7 @@ const index = () => {
                                             <input type="password" placeholder='pass' className='form-control'/>
                                         </div>
                                     </div>
+                                    <button type="submit" className='btn-submit'>Submit</button>
                                 </form>
                             </div>
                         </div>
