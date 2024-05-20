@@ -1,7 +1,60 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import '../css/index.css'
-import { FaHome,FaChevronRight } from 'react-icons/fa';
-const index = () => {
+import { FaHome,FaChevronRight,FaEdit, } from 'react-icons/fa';
+
+import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/js/bootstrap.bundle.min";
+
+
+const Index = () => {
+
+    const[team, setTeam] = useState(['']);
+    const[message, setMessage] = useState("");
+    const[formData,setformData] = useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',       
+    });
+    const handleChange = async(e) =>{
+        setformData({...formData,[e.target.name]:e.target.value});
+    }
+    const handleSubmit = async(e)=>{
+        e.preventDefault();
+        console.log('Form Data',formData);
+        try {
+            const response = await fetch('http://192.168.1.11:3003/create-sales-person',{
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body:JSON.stringify(formData)
+            })
+            const data = await response.json();
+            setMessage(data);
+            setTimeout(() => {
+                window.location.reload();
+            }, 5000);
+        } catch (error) {
+            console.log('Error in connection',error);
+        }
+    }
+    useEffect(() => {
+        const getTeam = async() =>{
+            try {
+                const response = await fetch('http://192.168.1.11:3003/sales-team');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`)
+                }
+
+                const data =await response.json();
+                console.log('data',data)
+                setTeam(data);
+            } catch (error) {
+                console.log('Error',error);
+            }
+        }
+        getTeam();
+    }, []);
+    console.log('Team',team);
   return (
     <div className="page-container-darker">
         <div className="left-side-menu">
@@ -87,7 +140,7 @@ const index = () => {
                        </div>
                     </div>
                     <div className="stretched-card">
-                       <div className="card bg-dark">
+                       <div className="card bg-dark-custom">
                             <div className="card-body">
                                 <div className="card-content">
                                      <div className="card-content-title">
@@ -106,23 +159,33 @@ const index = () => {
                                 <h4 className="card_title">
                                     Create Sales Person
                                 </h4>
-                                <form action="">
+                                {   message&&
+                                    <p className='alert alert-success'>{message.message}</p>
+                                }
+                                
+                                <form action="" method='POST' onSubmit={handleSubmit}>
                                     <div className="row form-group">
-                                        <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Name</label>
+                                        <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person First Name</label>
                                         <div className="col-sm-12">
-                                            <input type="text" placeholder='name' className='form-control'/>
+                                            <input type="text" placeholder='First name' name='first_name' value={formData.first_name} onChange={handleChange} className='form-control'/>
+                                        </div>
+                                    </div>
+                                    <div className="row form-group">
+                                        <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Last Name</label>
+                                        <div className="col-sm-12">
+                                            <input type="text" placeholder='Last name' name='last_name' value={formData.last_name} onChange={handleChange} className='form-control'/>
                                         </div>
                                     </div>
                                     <div className="row form-group">
                                         <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Email</label>
                                         <div className="col-sm-12">
-                                            <input type="email" placeholder='email' className='form-control'/>
+                                            <input type="email" placeholder='email' name='email' value={formData.email} onChange={handleChange} className='form-control'/>
                                         </div>
                                     </div>
                                     <div className="row form-group">
                                         <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Password</label>
                                         <div className="col-sm-12">
-                                            <input type="password" placeholder='pass' className='form-control'/>
+                                            <input type="password" placeholder='pass' name='password' value={formData.password} onChange={handleChange} className='form-control'/>
                                         </div>
                                     </div>
                                     <button type="submit" className='btn-submit'>Submit</button>
@@ -131,10 +194,61 @@ const index = () => {
                         </div>
                      </div>
                 </div>
+                <div className="row ">
+                    <div className="col-lg-12 mt-4">
+                         <div className="card">
+                            <div className="card-body">
+                                <h4 className="card_title">Sales person list</h4>
+                                <div className="single-table">
+                                    <div className="table-responsive">
+                                        <table className="table table-hover progress-table text-center table">
+                                            <thead className="text-uppercase">
+                                                <tr >
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Email</th>
+                                                    <th scope='col'>UID</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className='text-uppercase'>
+
+                                                    {
+                                                        Array.isArray(team) && team.length>0 ?(
+                                                            team.map((teamInfo,index)=>(
+                                                                <>
+                                                                <tr>
+                                                                       <td>{teamInfo.first_name}  {teamInfo.last_name}</td>
+                                                                        <td>{teamInfo.email}</td>
+                                                                        <td>{teamInfo.unique_id}</td>
+                                                                        <td>
+                                                                            <ul className='d-flex justify-content-center'>
+                                                                                <li className='mr-3'>
+                                                                                    <button className='btn btn-primary'>Edit</button>
+                                                                                </li>
+                                                                                <li className='mr-3'>
+                                                                                    <button className='btn btn-danger'>Delete</button>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </td>                                                                  
+                                                                 </tr></>
+                                                            ))  
+                                                        ):(
+                                                            <tr>No Team data found </tr>
+                                                        )
+                                                    }
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                </div>
              </div>
         </div>
     </div>
   )
 }
 
-export default index
+export default Index
