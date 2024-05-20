@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import '../css/index.css'
-import { FaHome,FaChevronRight,FaEdit, } from 'react-icons/fa';
+import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt } from 'react-icons/fa';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 // import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -207,6 +207,7 @@ const Index = () => {
                                                     <th scope="col">Name</th>
                                                     <th scope="col">Email</th>
                                                     <th scope='col'>UID</th>
+                                                    <th scope='col'>Leads</th>
                                                     <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
@@ -220,13 +221,14 @@ const Index = () => {
                                                                        <td>{teamInfo.first_name}  {teamInfo.last_name}</td>
                                                                         <td>{teamInfo.email}</td>
                                                                         <td>{teamInfo.unique_id}</td>
+                                                                        <td><button className="btn btn-info"><FaExternalLinkAlt/></button></td>
                                                                         <td>
                                                                             <ul className='d-flex justify-content-center'>
                                                                                 <li className='mr-3'>
-                                                                                    <button className='btn btn-primary'>Edit</button>
+                                                                                    <button className='btn btn-primary'><FaEdit/></button>
                                                                                 </li>
                                                                                 <li className='mr-3'>
-                                                                                    <button className='btn btn-danger'>Delete</button>
+                                                                                    <button className='btn btn-danger'><FaTrash/></button>
                                                                                 </li>
                                                                             </ul>
                                                                         </td>                                                                  
