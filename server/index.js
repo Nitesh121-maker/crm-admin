@@ -28,14 +28,32 @@ app.post('/create-sales-person',(req,res)=>{
    const random = twodigitrandom();
    const twochar = last_name.slice(0,2);
    const unique_id = first_name+random+twochar;
-
+   const sqltableCreate = `CREATE TABLE IF NOT EXISTS \`${unique_id}\` (
+      id SERIAL PRIME NUMBER,
+      unique_id VARCHAR(55),
+      fullname VARCHAR(55),
+      email VARCHAR(100),
+      number VARCHAR(20),
+      company VARCHAR(100),
+      requirements LONGTEXT,
+      reminder datetime,
+      status VARCHAR(20),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   );`
    const sqlPost = "INSERT INTO sales_team (unique_id,first_name,last_name,email,password) VALUES (?,?,?,?,?)";
-
+   
    con.query(sqlPost,[unique_id,first_name,last_name,email,password],(err,result)=>{
         if (err) {
             res.status(500).send({message:'Internal server error in '});
         } else {
-            res.status(200).send({message:'Created new sales person'});
+            // Create Table for Sales person Client
+            con.query(sqltableCreate,(err,result)=>{
+                if (err) {
+                    res.status(500).send({message:'Internal server error in creating table for clients'});
+                }else{
+                    res.status(200).send({message:'Sales person created successfully'});
+                }
+            });
         }
    });
 });

@@ -1,0 +1,17 @@
+.chat-card{
+    display: flex;
+    flex-direction: column !important;
+}
+.chat-bg{
+    background-image: url(../images/chat-background-one.jpg) !important;
+}
+/* .admin-chat-bg{
+    background-color: gray;
+} */
+.message-time{
+  font-size: 15px;
+  color: gray;
+}
+.ml-auto{
+    margin-left: auto;
+}
