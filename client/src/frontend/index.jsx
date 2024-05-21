@@ -34,7 +34,7 @@ const Index = () => {
         e.preventDefault();
         console.log('Form Data',formData);
         try {
-            const response = await fetch('http://192.168.1.11:3003/create-sales-person',{
+            const response = await fetch('http://192.168.1.3:3003/create-sales-person',{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body:JSON.stringify(formData)
@@ -51,7 +51,7 @@ const Index = () => {
     useEffect(() => {
         const getTeam = async() =>{
             try {
-                const response = await fetch('http://192.168.1.11:3003/sales-team');
+                const response = await fetch('http://192.168.1.3:3003/sales-team');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`)
                 }

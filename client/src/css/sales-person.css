@@ -3,15 +3,41 @@
     flex-direction: column !important;
 }
 .chat-bg{
-    background-image: url(../images/chat-background-one.jpg) !important;
+    /* background: url(../images/chat-background-one.jpg) !important; */
+    background: #181831 !important;
 }
-/* .admin-chat-bg{
-    background-color: gray;
-} */
+.admin-chat-bg{
+    background: #212529 !important;
+    border-radius: 20px;
+    max-width: max-content;
+    line-height: .5;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+.sales-chat-bg{
+    background: #242741 !important;
+    border-radius: 20px;
+    max-width: max-content;
+    line-height: .5;
+    margin-left: 5px;
+    margin-top: 5px;
+}
 .message-time{
   font-size: 15px;
   color: gray;
 }
 .ml-auto{
     margin-left: auto;
+}
+.list-bg{
+    background: #181831 !important;
+}
+.list-group{
+    cursor: pointer;
+    margin-top: 2px;
+}
+
+.list-group:hover {
+    background-color: #343a40; /* Dark background on hover */
+    color: #f8f9fa; /* Light text color on hover */
 }

@@ -7,6 +7,7 @@ const mysql = require('mysql');
 app.use(cors());
 app.use(bodyParser.json());
 
+
 const con = mysql.createConnection(
     {
         host: 'localhost',
@@ -29,17 +30,18 @@ app.post('/create-sales-person',(req,res)=>{
    const twochar = last_name.slice(0,2);
    const unique_id = first_name+random+twochar;
    const sqltableCreate = `CREATE TABLE IF NOT EXISTS \`${unique_id}\` (
-      id SERIAL PRIME NUMBER,
-      unique_id VARCHAR(55),
-      fullname VARCHAR(55),
-      email VARCHAR(100),
-      number VARCHAR(20),
-      company VARCHAR(100),
-      requirements LONGTEXT,
-      reminder datetime,
-      status VARCHAR(20),
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-   );`
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        unique_id VARCHAR(55),
+        fullname VARCHAR(55),
+        email VARCHAR(100),
+        number VARCHAR(20),
+        company VARCHAR(100),
+        requirements LONGTEXT,
+        reminder DATETIME,
+        status VARCHAR(20),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`
+
    const sqlPost = "INSERT INTO sales_team (unique_id,first_name,last_name,email,password) VALUES (?,?,?,?,?)";
    
    con.query(sqlPost,[unique_id,first_name,last_name,email,password],(err,result)=>{
@@ -70,6 +72,6 @@ app.get('/sales-team',(req,res)=>{
     })
 });
 
-app.listen(3003,'192.168.1.11',()=>{
+app.listen(3003,'192.168.1.3',()=>{
     console.log('Server is running on port 3003');
 })
