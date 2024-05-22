@@ -13,14 +13,14 @@ const Index = () => {
     const[message, setMessage] = useState("");
     const[index,setIndex] = useState(true);
     const[salesperson,setSalesperson] = useState(false);
-    const[chat,setChat] = useState("");
-    
-    const handleSalesperson =()=>{
+    const[salespersonClient,setsalespersonClient] = useState([""]);
+  
+    const handleSalesperson =(clients)=>{
         setSalesperson(true);
         setIndex(false)
-        setChat()
+        setsalespersonClient(clients)
     }
-
+    console.log('SalespersonClient:',salespersonClient)
     const[formData,setformData] = useState({
         first_name: '',
         last_name: '',
@@ -227,7 +227,7 @@ const Index = () => {
                                                                           <td>{teamInfo.first_name}  {teamInfo.last_name}</td>
                                                                           <td>{teamInfo.email}</td>
                                                                           <td>{teamInfo.unique_id}</td>
-                                                                          <td><button className="btn btn-info" onClick={handleSalesperson}><FaExternalLinkAlt /></button></td>
+                                                                          <td><button className="btn btn-info" onClick={()=>handleSalesperson(teamInfo)}><FaExternalLinkAlt /></button></td>
                                                                           <td>
                                                                               <ul className='d-flex justify-content-center'>
                                                                                   <li className='mr-3'>
@@ -255,7 +255,7 @@ const Index = () => {
                 }
                 {salesperson&&
                 <div className="mt-4">
-                    <Salesperson/>
+                    <Salesperson salespersonClient={salespersonClient}/>
                 </div>
                 }
                 

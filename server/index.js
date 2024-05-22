@@ -71,6 +71,31 @@ app.get('/sales-team',(req,res)=>{
         }
     })
 });
+// Client List
+app.get('/client-list/:unique_id',(req,res) =>{
+    const{unique_id} =req.params;
+    const sqlGetClient = `SELECT * FROM \`${unique_id}\` `;
+    console.log('Unique_id',unique_id);
+    con.query(sqlGetClient,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal server error"})
+        }else{
+            res.status(200).send(result);
+        }          
+    })
+});
+// Client Chat 
+app.get('/client-chat/:unique_id',(req,res)=>{
+    const{unique_id}=req.params;
+    const sqlGetChat = `SELECT * FROM \`${unique_id}\``;
+    con.query(sqlGetChat,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal server error"})
+        }else{
+            res.status(200).send(result);
+        }
+    });
+})
 
 app.listen(3003,'192.168.1.3',()=>{
     console.log('Server is running on port 3003');
