@@ -1,17 +1,18 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect,useCallback} from 'react'
 import '../css/sales-person.css'
 import { FaPaperPlane } from 'react-icons/fa'
 const Salesperson = ({salespersonClient}) => {
     console.log('salespersonClient',salespersonClient)
     const[clientlist, setClientList] = useState('');
     const[clientchat,setclientchat] = useState('');
-    const unique_id = salespersonClient.unique_id;
+    const sales_unique_id = salespersonClient.unique_id;
+    const [selectedClientId, setSelectedClientId] = useState(null);
 
     useEffect(() => {
         const getClient = async () => {
-            if (!unique_id) return;
+            if (!sales_unique_id) return;
             try {
-                const response = await fetch(`http://192.168.1.3:3003/client-list/${unique_id}`);
+                const response = await fetch(`http://192.168.1.3:3003/client-list/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -24,8 +25,8 @@ const Salesperson = ({salespersonClient}) => {
         };
         getClient();
     }, []);
-
-    const getChat = async(unique_id) =>{
+    
+    const getChat = useCallback(async(unique_id) =>{
 
         try {
             const response = await fetch(`http://192.168.1.3:3003/client-chat/${unique_id}`);
@@ -37,13 +38,50 @@ const Salesperson = ({salespersonClient}) => {
         } catch (error) {
             console.log(error);
         }
-    }
+    }, [])
     useEffect(() => {
-        const intervalId = setInterval(getChat, 1000/2); 
-    
-        // Clean up function to clear the interval when the component unmounts
-        return () => clearInterval(intervalId);
-      }, []);
+        if (selectedClientId) {
+            const intervalId = setInterval(() => getChat(selectedClientId), 500); // Fetch every 500ms
+
+            // Clean up function to clear the interval when the component unmounts or selectedClientId changes
+            return () => clearInterval(intervalId);
+        }
+    }, [selectedClientId, getChat]);
+
+    const handleClientClick = (unique_id) => {
+        setSelectedClientId(unique_id);
+        getChat(unique_id);
+    };
+    // const client_id = selectedClientId.unique_id;
+    console.log('client_id',selectedClientId);
+    const[adminmessage,setadminmessage] = useState({
+        message: '',
+    });
+    const handleAdminMessagechange =(e)=>{
+        setadminmessage({...adminmessage, [e.target.name]: e.target.value});
+    }
+    const handleSendMessage = async(e)=>{
+        e.preventDefault();
+        try {
+            const response = await fetch(`http://192.168.1.3:3003/admin-message/${selectedClientId}`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(adminmessage)
+            })
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              // Clear the textarea after successful submission
+              setadminmessage({ message: '' });
+            const data = await response.json();
+            console.log('data',data)
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
     console.log('Client',clientlist);
     console.log('Client Chat',clientchat);
   return (
@@ -60,7 +98,7 @@ const Salesperson = ({salespersonClient}) => {
                        Array.isArray(clientlist) && clientlist.length ?(
                            clientlist.map((clientlist) => (
                                 <div className="list-group ">
-                                    <li className='list-group-item list-bg text-white' onClick={() => getChat(clientlist.unique_id)}>{clientlist.fullname}</li>
+                                    <li className='list-group-item list-bg text-white' onClick={() => handleClientClick(clientlist.unique_id)}>{clientlist.fullname}</li>
                                 </div>
                            ))
                        ):(
@@ -89,29 +127,29 @@ const Salesperson = ({salespersonClient}) => {
                     {
                         Array.isArray(clientchat) && clientchat.length ?(
                             clientchat.map((clientchat) => (
-                                <div className="card-body text-start col-md-10 sales-chat-bg flex-none" style={{flex:'none !important'}}>
+                                <>
+                                {clientchat.message&&
+                                <div className="card-body text-start col-md-10 sales-chat-bg flex-none" style={{ flex: 'none !important' }}>
                                     <p>{clientchat.message}</p>
                                     <span className='message-time'>{new Date(clientchat.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
+                                }
+                                {clientchat.adminmessage&&
+                                <div className="card-body text-end col-md-10 ml-auto admin-chat-bg flex-none">
+                                    <p>{clientchat.adminmessage}</p>
+                                    <span className='message-time'>11:42</span>
+                                </div>
+                                }
+                              </>
                             ))
                         ):(
                             <div className="text-center">No Chat</div>
                         )
                     }
-
-                    <div className="card-body text-end col-md-10 ml-auto admin-chat-bg flex-none">
-                        <p>End aligned text on viewports sized MD (medium) or wider.</p>
-                        <span className='message-time'>11:42</span>
-                    </div>
-
-                    <div className="card-body text-end ml-auto admin-chat-bg flex-none">
-                        <p>End aligned text on viewports sized MD (medium) or wider. <span>A</span></p>
-                        <span className='message-time'>11:43</span>
-                    </div>
                 </div>
                 <div className="card-footer">
-                     <form action="" className='d-flex '>
-                        <textarea name="" id=""  rows="1" className='form-control'></textarea>
+                     <form action="" className='d-flex' onSubmit={handleSendMessage}>
+                        <textarea name="message" value={adminmessage.message} onChange={handleAdminMessagechange} id=""  rows="1" className='form-control'  ></textarea>
                         <button className="btn btn-primary"><FaPaperPlane/></button>
                      </form>
                 </div>
