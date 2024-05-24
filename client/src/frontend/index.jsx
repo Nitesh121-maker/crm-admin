@@ -16,7 +16,7 @@ const Index = () => {
     const[salesperson,setSalesperson] = useState(false);
     const[salespersonClient,setsalespersonClient] = useState([""]);
     const[status,setStatus] = useState(false);
-  
+    const[total,setTotal] = useState('');
     const handleSalesperson =(clients)=>{
         setSalesperson(true);
         setIndex(false)
@@ -70,7 +70,21 @@ const Index = () => {
         }
         getTeam();
     }, []);
-  
+   useEffect(() => {
+      const getTotal = async(e) =>{
+        try {
+            const response = await fetch('http://192.168.1.3:3003/total-sale');
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`)
+            }
+            const data =await response.json();
+
+        } catch (error) {
+            console.log('error')
+        }
+      }
+      getTotal();
+   }, []);
   return (
     <div className="page-container-darker">
         <div className="left-side-menu">
@@ -149,7 +163,7 @@ const Index = () => {
                                   <div className="card-body">
                                       <div className="card-content">
                                           <div className="card-content-title">
-                                              <p>Total Sale</p>
+                                              <p>Total Closed Leads</p>
                                               <h3>200</h3>
                                           </div>
                                       </div>
@@ -161,7 +175,7 @@ const Index = () => {
                                   <div className="card-body">
                                       <div className="card-content">
                                           <div className="card-content-title">
-                                              <p>Total Sale</p>
+                                              <p>Total Generated Invoice</p>
                                               <h3>200</h3>
                                           </div>
                                       </div>

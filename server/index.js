@@ -138,6 +138,31 @@ app.get('/sales-person-closed-client/:sales_unique_id',(req,res)=>{
         }
     })
 })
+
+// Get Total Sale
+app.get('/total-sale',(req,res)=>{
+    const sqlGetTotalSale = `SELECT * FROM successful_lead`;
+    con.query(sqlGetTotalSale,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server in total sale api"})
+        } else {
+            res.send(result)
+        }
+     })
+})
+// Get Total Closed lead
+app.get('/total-closed-lead',(req,res)=>{
+    const sqlGetTotalclosed = `SELECT * FROM closed_leads`;
+    con.query(sqlGetTotalclosed,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server in total closed lead api"})
+            } else {
+                res.send(result)
+                }
+    })
+})
+// Get Total In Process 
+
 app.listen(3003,'192.168.1.3',()=>{
     console.log('Server is running on port 3003');
 })
