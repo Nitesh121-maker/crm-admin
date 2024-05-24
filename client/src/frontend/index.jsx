@@ -2,6 +2,7 @@ import React,{useState,useEffect} from 'react'
 import '../css/index.css'
 import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt } from 'react-icons/fa';
 import Salesperson from './sales-person';
+import Status from './Status';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from './footer';
 // import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -14,11 +15,17 @@ const Index = () => {
     const[index,setIndex] = useState(true);
     const[salesperson,setSalesperson] = useState(false);
     const[salespersonClient,setsalespersonClient] = useState([""]);
+    const[status,setStatus] = useState(false);
   
     const handleSalesperson =(clients)=>{
         setSalesperson(true);
         setIndex(false)
         setsalespersonClient(clients)
+    }
+    const handleStatus = async(e) =>{
+        setStatus(true);
+        setSalesperson(false);
+        setIndex(false);
     }
     console.log('SalespersonClient:',salespersonClient)
     const[formData,setformData] = useState({
@@ -255,12 +262,15 @@ const Index = () => {
                 }
                 {salesperson&&
                 <div className="mt-4">
-                    <Salesperson salespersonClient={salespersonClient}/>
+                    <Salesperson salespersonClient={salespersonClient} handleStatus={handleStatus}/>
                 </div>
                 }
-                
+                {status&&
+                <div className="mt-4">
+                    <Status/>
+                </div>
+                }
              </div>
-
         </div>
     </div>
   )

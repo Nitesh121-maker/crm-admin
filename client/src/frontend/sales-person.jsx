@@ -1,7 +1,7 @@
 import React,{useState,useEffect,useCallback} from 'react'
 import '../css/sales-person.css'
 import { FaPaperPlane } from 'react-icons/fa'
-const Salesperson = ({salespersonClient}) => {
+const Salesperson = ({salespersonClient,handleStatus}) => {
     console.log('salespersonClient',salespersonClient)
     const[clientlist, setClientList] = useState('');
     const[clientchat,setclientchat] = useState('');
@@ -142,7 +142,7 @@ const Salesperson = ({salespersonClient}) => {
               <div className="card col-sm-12 col-md-4">
                   <div className="card-header text-white ">
                       <div className=" justify-content-center">
-                          <h5 className="card-title">Client List</h5>
+                          <h5 className="card_title">Client List</h5>
                       </div>
                   </div>
                   <div className="list mt-4 ">
@@ -195,7 +195,7 @@ const Salesperson = ({salespersonClient}) => {
             <div className="collg-12 col-md-12">
                 <div className="card">
                     <div className="card-header">
-                        <h4 className="card-title text-white ml-3">Sales</h4>
+                        <h4 className="card_title text-white ml-3">Sales</h4>
                     </div>
                     <div className="card-body">
                         <div className="card-header">
@@ -226,7 +226,7 @@ const Salesperson = ({salespersonClient}) => {
                                                            <td>{inprogresslist.fullname}</td>
                                                             <td>{inprogresslist.email}</td>
                                                             <td>{inprogresslist.number}</td>
-                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td>                                                      
+                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' onClick={handleStatus}>status</button></td>                                                      
                                                         </tr>
                                                      </>                                                   
                                                     ))
