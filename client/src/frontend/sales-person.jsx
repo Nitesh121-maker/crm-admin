@@ -8,8 +8,10 @@ const Salesperson = ({salespersonClient}) => {
     const sales_unique_id = salespersonClient.unique_id;
     const [selectedClientId, setSelectedClientId] = useState(null);
     const[inprogress,setInprogress] = useState(true);
+    const[inprogresslist,setInprogresslist] = useState('');
     const[successful,setSuccessful] = useState(false);
     const[closed,setClosed] = useState(false);
+    const[closedList,setClosedlist] = useState('');
     const handleinprogress =()=>{
         setInprogress(true);
         setSuccessful(false);
@@ -44,7 +46,7 @@ const Salesperson = ({salespersonClient}) => {
     }, []);
     
     const getChat = useCallback(async(unique_id) =>{
-
+        
         try {
             const response = await fetch(`http://192.168.1.3:3003/client-chat/${unique_id}`);
             if (!response.ok) {
@@ -69,8 +71,8 @@ const Salesperson = ({salespersonClient}) => {
         setSelectedClientId(unique_id);
         getChat(unique_id);
     };
-    // const client_id = selectedClientId.unique_id;
-    console.log('client_id',selectedClientId);
+
+    // Admin Message
     const[adminmessage,setadminmessage] = useState({
         message: '',
     });
@@ -99,8 +101,41 @@ const Salesperson = ({salespersonClient}) => {
             console.log(error);
         }
     }
-    console.log('Client',clientlist);
-    console.log('Client Chat',clientchat);
+    // Sales Person In Progress Client
+    useEffect(()=>{
+      if(!sales_unique_id) return;
+      const getInprogress = async (e) =>{
+        try {
+            const response = await fetch(`http://192.168.1.3:3003/sales-person-in-progress/${sales_unique_id}`);
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setInprogresslist(data);
+        } catch (error) {
+            console.log(error)
+        }
+      }
+      getInprogress();
+    } , [])
+    // Sales Person Closed Client
+    useEffect(() => {
+        if (!sales_unique_id) return;
+        const getClosedlead = async(e) =>{
+            try {
+                const response = await fetch(`http://192.168.1.3:3003/sales-person-closed-client/${sales_unique_id}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                    }
+                const data = await response.json();
+                console.log('Closed Data',data)
+                setClosedlist(data);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getClosedlead();
+    }, [sales_unique_id]);
   return (
     <><div className="row">
           <div className="d-flex col-md-12">
@@ -120,17 +155,6 @@ const Salesperson = ({salespersonClient}) => {
                       ) : (
                           <div className="text-center">No Client</div>
                       )}
-                      {/*
-
-     <div className="list-group">
-        <li className='list-group-item list-bg text-white'>Shakti Raghav</li>
-     </div>
-     <div className="list-group">
-        <li className='list-group-item list-bg text-white'>Luckey Cipy</li>
-     </div>
-     <div className="list-group ">
-        <li className='list-group-item list-bg text-white'>Kundan Sharma</li>
-     </div> */}
                   </div>
               </div>
 
@@ -194,12 +218,28 @@ const Salesperson = ({salespersonClient}) => {
                                             </tr>
                                         </thead>
                                         <tbody className='text-uppercase'>
-                                            <tr>
+                                            {
+                                                Array.isArray(inprogresslist) && inprogresslist.length>0 ?(
+                                                    inprogresslist.map((inprogresslist,index)=>(
+                                                        <>
+                                                        <tr>
+                                                           <td>{inprogresslist.fullname}</td>
+                                                            <td>{inprogresslist.email}</td>
+                                                            <td>{inprogresslist.number}</td>
+                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td>                                                      
+                                                        </tr>
+                                                     </>                                                   
+                                                    ))
+                                                ):(
+                                                    <tr>No Data in In progress</tr>
+                                                )
+                                            }
+                                            {/* <tr>
                                                 <td>Shakti Raghav</td>
                                                 <td>info.Shakti@gmail.com</td>
                                                 <td>8789779098</td>
                                                 <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td>
-                                            </tr>
+                                            </tr> */}
                                         </tbody>
                                     </table>
                                 </div>
@@ -240,17 +280,27 @@ const Salesperson = ({salespersonClient}) => {
                                                 <th scope="col">Name</th>
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Phone</th>
+                                                <th scope='col'>Requirements</th>
                                                 <th scope='col'>Reason</th>
                                             </tr>
                                         </thead>
                                         <tbody className='text-uppercase'>
-                                            <tr>
-                                                <td>Lucky Sippy</td>
-                                                <td>info.lucky@gmail.com</td>
-                                                <td>8789779098</td>
-                                                <td>Not Intrested</td>
-                                                {/* <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td> */}
-                                            </tr>
+                                            {
+                                                Array.isArray(closedList) && closedList.length>0 ?(
+                                                    closedList.map((closedclient,index)=>(
+                                                        <tr>
+                                                            <td>{closedclient.fullname}</td>
+                                                            <td>{closedclient.email}</td>
+                                                            <td>{closedclient.number}</td>
+                                                            <td>{closedclient.requirements}</td>
+                                                            <td>{closedclient.reason}</td>
+                                                            {/* <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td> */}
+                                                        </tr>
+                                                    ))
+                                                ):(
+                                                    <tr>No Closed data</tr>
+                                                )
+                                            }
                                         </tbody>
                                     </table>
                                 </div>

@@ -112,6 +112,32 @@ app.post('/admin-message/:selectedClientId',(req,res)=>{
                 }
         });
 })
+// Get In progress client list of sales person
+app.get('/sales-person-in-progress/:sales_unique_id',(req,res)=>{
+    const{sales_unique_id} = req.params;
+    const sqlGetInprogress = `SELECT * FROM \`${sales_unique_id}\` `;
+    con.query(sqlGetInprogress,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server Error in API sales-person-in-progress/sales_unique_id"})
+        } else {
+            res.send(result)
+        }
+    })
+})
+// Get Closed Client list of Sales Person
+app.get('/sales-person-closed-client/:sales_unique_id',(req,res)=>{
+    const{sales_unique_id} = req.params;
+    const query = 'SELECT * FROM closed_leads WHERE sales_person_id = ?';
+    con.query(query,[sales_unique_id],(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal server error"})
+            console.log('Error',err);
+        }else{
+            res.status(200).send(result);
+            // console.log('Result',result);
+        }
+    })
+})
 app.listen(3003,'192.168.1.3',()=>{
     console.log('Server is running on port 3003');
 })
