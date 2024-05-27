@@ -12,6 +12,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const[successful,setSuccessful] = useState(false);
     const[closed,setClosed] = useState(false);
     const[closedList,setClosedlist] = useState('');
+
     const handleinprogress =()=>{
         setInprogress(true);
         setSuccessful(false);
@@ -27,11 +28,14 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         setSuccessful(false);
         setClosed(true);
     }
+    const handleClick = (client) => {
+        handleStatus(client);
+    };
     useEffect(() => {
         const getClient = async () => {
             if (!sales_unique_id) return;
             try {
-                const response = await fetch(`http://192.168.1.3:3003/client-list/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.10:3003/client-list/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -48,7 +52,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const getChat = useCallback(async(unique_id) =>{
         
         try {
-            const response = await fetch(`http://192.168.1.3:3003/client-chat/${unique_id}`);
+            const response = await fetch(`http://192.168.1.10:3003/client-chat/${unique_id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -58,6 +62,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
             console.log(error);
         }
     }, [])
+
     useEffect(() => {
         if (selectedClientId) {
             const intervalId = setInterval(() => getChat(selectedClientId), 500); // Fetch every 500ms
@@ -76,13 +81,15 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const[adminmessage,setadminmessage] = useState({
         message: '',
     });
+
     const handleAdminMessagechange =(e)=>{
         setadminmessage({...adminmessage, [e.target.name]: e.target.value});
     }
+
     const handleSendMessage = async(e)=>{
         e.preventDefault();
         try {
-            const response = await fetch(`http://192.168.1.3:3003/admin-message/${selectedClientId}`,{
+            const response = await fetch(`http://192.168.1.10:3003/admin-message/${selectedClientId}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,12 +108,13 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
             console.log(error);
         }
     }
+
     // Sales Person In Progress Client
     useEffect(()=>{
       if(!sales_unique_id) return;
       const getInprogress = async (e) =>{
         try {
-            const response = await fetch(`http://192.168.1.3:3003/sales-person-in-progress/${sales_unique_id}`);
+            const response = await fetch(`http://192.168.1.10:3003/sales-person-in-progress/${sales_unique_id}`);
             if(!response.ok){
                 throw new Error('Network response was not ok');
             }
@@ -118,12 +126,13 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
       }
       getInprogress();
     } , [])
+    
     // Sales Person Closed Client
     useEffect(() => {
         if (!sales_unique_id) return;
         const getClosedlead = async(e) =>{
             try {
-                const response = await fetch(`http://192.168.1.3:3003/sales-person-closed-client/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.10:3003/sales-person-closed-client/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                     }
@@ -136,6 +145,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         }
         getClosedlead();
     }, [sales_unique_id]);
+
   return (
     <><div className="row">
           <div className="d-flex col-md-12">
@@ -226,7 +236,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                            <td>{inprogresslist.fullname}</td>
                                                             <td>{inprogresslist.email}</td>
                                                             <td>{inprogresslist.number}</td>
-                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' onClick={handleStatus}>status</button></td>                                                      
+                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' onClick={()=>handleClick(inprogresslist)}>status</button></td>                                                      
                                                         </tr>
                                                      </>                                                   
                                                     ))
@@ -234,12 +244,6 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                     <tr>No Data in In progress</tr>
                                                 )
                                             }
-                                            {/* <tr>
-                                                <td>Shakti Raghav</td>
-                                                <td>info.Shakti@gmail.com</td>
-                                                <td>8789779098</td>
-                                                <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td>
-                                            </tr> */}
                                         </tbody>
                                     </table>
                                 </div>

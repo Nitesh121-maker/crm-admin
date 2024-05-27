@@ -29,18 +29,19 @@ app.post('/create-sales-person',(req,res)=>{
    const random = twodigitrandom();
    const twochar = last_name.slice(0,2);
    const unique_id = first_name+random+twochar;
-   const sqltableCreate = `CREATE TABLE IF NOT EXISTS \`${unique_id}\` (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        unique_id VARCHAR(55),
-        fullname VARCHAR(55),
-        email VARCHAR(100),
-        number VARCHAR(20),
-        company VARCHAR(100),
-        requirements LONGTEXT,
-        reminder DATETIME,
-        status VARCHAR(20),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );`
+//    const sqltableCreate = `CREATE TABLE IF NOT EXISTS \`${unique_id}\` (
+//         id INT AUTO_INCREMENT PRIMARY KEY,
+//         unique_id VARCHAR(55),
+//         fullname VARCHAR(55),
+//         email VARCHAR(100),
+//         number VARCHAR(20),
+//         company VARCHAR(100),
+//         requirements LONGTEXT,
+//         reminder DATETIME,
+//         invoice_number VARCHAR(20),
+//         invoice_date DATE,
+//         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+//     );`
 
    const sqlPost = "INSERT INTO sales_team (unique_id,first_name,last_name,email,password) VALUES (?,?,?,?,?)";
    
@@ -49,13 +50,14 @@ app.post('/create-sales-person',(req,res)=>{
             res.status(500).send({message:'Internal server error in '});
         } else {
             // Create Table for Sales person Client
-            con.query(sqltableCreate,(err,result)=>{
-                if (err) {
-                    res.status(500).send({message:'Internal server error in creating table for clients'});
-                }else{
-                    res.status(200).send({message:'Sales person created successfully'});
-                }
-            });
+            res.status(200).send({message:'Sales person created successfully'});
+            // con.query(sqltableCreate,(err,result)=>{
+            //     if (err) {
+            //         res.status(500).send({message:'Internal server error in creating table for clients'});
+            //     }else{
+            //         res.status(200).send({message:'Sales person created successfully'});
+            //     }
+            // });
         }
    });
 });
@@ -74,7 +76,7 @@ app.get('/sales-team',(req,res)=>{
 // Client List
 app.get('/client-list/:sales_unique_id',(req,res) =>{
     const{sales_unique_id} =req.params;
-    const sqlGetClient = `SELECT * FROM \`${sales_unique_id}\` `;
+    const sqlGetClient = `SELECT * FROM new_lead WHERE sales_person_id = '${sales_unique_id}' `;
     // console.log('Unique_id',unique_id);
     con.query(sqlGetClient,(err,result)=>{
         if (err) {
@@ -115,7 +117,7 @@ app.post('/admin-message/:selectedClientId',(req,res)=>{
 // Get In progress client list of sales person
 app.get('/sales-person-in-progress/:sales_unique_id',(req,res)=>{
     const{sales_unique_id} = req.params;
-    const sqlGetInprogress = `SELECT * FROM \`${sales_unique_id}\` `;
+    const sqlGetInprogress = `SELECT * FROM new_lead WHERE sales_person_id = '${sales_unique_id}' `;
     con.query(sqlGetInprogress,(err,result)=>{
         if (err) {
             res.status(500).send({message:"Internal Server Error in API sales-person-in-progress/sales_unique_id"})
@@ -162,7 +164,17 @@ app.get('/total-closed-lead',(req,res)=>{
     })
 })
 // Get Total In Process 
-
-app.listen(3003,'192.168.1.3',()=>{
+app.get('/total-in-process',(req,res)=>{
+    const sqlGetinprocess = `SELECT * FROM new_lead`;
+    console.query(sqlGetinprocess,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server in total in process api"})
+            } else {
+                res.send(result)
+            }
+    })
+})
+// Set 
+app.listen(3003,'192.168.1.10',()=>{
     console.log('Server is running on port 3003');
 })

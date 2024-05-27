@@ -17,17 +17,19 @@ const Index = () => {
     const[salespersonClient,setsalespersonClient] = useState([""]);
     const[status,setStatus] = useState(false);
     const[total,setTotal] = useState('');
+    const[clientDetails, setclientdetails] = useState('');
     const handleSalesperson =(clients)=>{
         setSalesperson(true);
         setIndex(false)
         setsalespersonClient(clients)
     }
-    const handleStatus = async(e) =>{
+    const handleStatus = (inprogresslist) =>{
         setStatus(true);
         setSalesperson(false);
         setIndex(false);
+        setclientdetails(inprogresslist);
     }
-    console.log('SalespersonClient:',salespersonClient)
+
     const[formData,setformData] = useState({
         first_name: '',
         last_name: '',
@@ -41,7 +43,7 @@ const Index = () => {
         e.preventDefault();
         console.log('Form Data',formData);
         try {
-            const response = await fetch('http://192.168.1.3:3003/create-sales-person',{
+            const response = await fetch('http://192.168.1.10:3003/create-sales-person',{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body:JSON.stringify(formData)
@@ -58,7 +60,7 @@ const Index = () => {
     useEffect(() => {
         const getTeam = async() =>{
             try {
-                const response = await fetch('http://192.168.1.3:3003/sales-team');
+                const response = await fetch('http://192.168.1.10:3003/sales-team');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`)
                 }
@@ -73,7 +75,7 @@ const Index = () => {
    useEffect(() => {
       const getTotal = async(e) =>{
         try {
-            const response = await fetch('http://192.168.1.3:3003/total-sale');
+            const response = await fetch('http://192.168.1.10:3003/total-sale');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`)
             }
@@ -281,7 +283,7 @@ const Index = () => {
                 }
                 {status&&
                 <div className="mt-4">
-                    <Status/>
+                    <Status clientDetails={clientDetails}/>
                 </div>
                 }
              </div>

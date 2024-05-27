@@ -1,6 +1,7 @@
 import React from 'react'
 
-const Status = () => {
+const Status = ({clientDetails}) => {
+    console.log('clientDetails',clientDetails)
   return (
     <div className='row'>
         <div className="col-lg-12 col-md-12">
@@ -13,13 +14,20 @@ const Status = () => {
                            <div className="card">
                                 <div className="card-body text-white">
                                     <h4 className='card_title'>User Details:</h4>
-                                    <ul>
-                                        <li>Name: Nitesh</li>
-                                        <li>Email: niteshchauhan8285@gmail.com</li>
-                                        <li>Phone:8989898989</li>
-                                        <li>Invoice:TI/24-25/234</li>
-                                        <li>Date:12-09-24</li>
-                                    </ul>
+                                    {clientDetails ? (
+                                        <ul>
+                                            <li>Name: {clientDetails.fullname}</li>
+                                            <li>Email: {clientDetails.email}</li>
+                                            <li>Phone: {clientDetails.number}</li>
+                                            <li>Invoice: {clientDetails.invoice_number}</li>
+                                            <li>Invoice: {clientDetails.invoice_date}</li>
+                                        </ul>
+                                    ) : (
+                                        <ul>
+                                            <li>No Data</li>
+                                        </ul>
+                                    )}
+
                                 </div>
                            </div>
                     </div>
