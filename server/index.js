@@ -174,7 +174,19 @@ app.get('/total-in-process',(req,res)=>{
             }
     })
 })
-// Set 
+// Set Successful Table
+app.post('/successful-lead',(req,res)=>{
+    const{sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount} = req.body;
+    const sqlUpdate = `INSERT INTO successful_lead (sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount) VALUES(?,?,?,?,?,?,?,?,?) `;
+    con.query(sqlUpdate,[sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount],(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server in successful lead api"})
+            console.log(err)
+        } else {
+            res.send({message:"Successful Lead Added Successfully"})
+        }
+    })
+})
 app.listen(3003,'192.168.1.10',()=>{
     console.log('Server is running on port 3003');
 })

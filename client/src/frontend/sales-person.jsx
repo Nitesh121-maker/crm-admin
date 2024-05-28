@@ -12,7 +12,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const[successful,setSuccessful] = useState(false);
     const[closed,setClosed] = useState(false);
     const[closedList,setClosedlist] = useState('');
-
+    
     const handleinprogress =()=>{
         setInprogress(true);
         setSuccessful(false);
@@ -28,9 +28,10 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         setSuccessful(false);
         setClosed(true);
     }
-    const handleClick = (client) => {
-        handleStatus(client);
+    const handleClick = (client,salespersonClient) => {
+        handleStatus(client,salespersonClient);
     };
+
     useEffect(() => {
         const getClient = async () => {
             if (!sales_unique_id) return;
@@ -236,7 +237,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                            <td>{inprogresslist.fullname}</td>
                                                             <td>{inprogresslist.email}</td>
                                                             <td>{inprogresslist.number}</td>
-                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' onClick={()=>handleClick(inprogresslist)}>status</button></td>                                                      
+                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' onClick={()=>handleClick(inprogresslist,salespersonClient)}>status</button></td>                                                      
                                                         </tr>
                                                      </>                                                   
                                                     ))

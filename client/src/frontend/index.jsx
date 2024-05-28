@@ -22,12 +22,14 @@ const Index = () => {
         setSalesperson(true);
         setIndex(false)
         setsalespersonClient(clients)
+        setStatus(false);
     }
-    const handleStatus = (inprogresslist) =>{
+    const handleStatus = (inprogresslist,salespersonClient) =>{
         setStatus(true);
         setSalesperson(false);
         setIndex(false);
         setclientdetails(inprogresslist);
+        setsalespersonClient(salespersonClient)
     }
 
     const[formData,setformData] = useState({
@@ -283,7 +285,7 @@ const Index = () => {
                 }
                 {status&&
                 <div className="mt-4">
-                    <Status clientDetails={clientDetails}/>
+                    <Status clientDetails={clientDetails} salespersonClient={salespersonClient} handleSalesperson={handleSalesperson}/>
                 </div>
                 }
              </div>
