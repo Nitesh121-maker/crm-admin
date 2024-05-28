@@ -12,7 +12,8 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const[successful,setSuccessful] = useState(false);
     const[closed,setClosed] = useState(false);
     const[closedList,setClosedlist] = useState('');
-    
+    const[erroMessage,seterrorMessage] = useState('');
+    const[successfullead,setsuccessfullead] = useState('');
     const handleinprogress =()=>{
         setInprogress(true);
         setSuccessful(false);
@@ -146,14 +147,29 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         }
         getClosedlead();
     }, [sales_unique_id]);
-
+    useEffect(() => {
+        const getSuccessfulLead = async()=>{
+            try {
+                const response = await fetch(`http://192.168.1.10:3003/successful-lead-data/${sales_unique_id}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                    }
+                    const data = await response.json();
+                    console.log('Successful Lead Data',data)
+                    setsuccessfullead(data);
+            } catch (error) {
+                seterrorMessage(error);
+            }
+        }
+        getSuccessfulLead();
+    }, []);
   return (
     <><div className="row">
           <div className="d-flex col-md-12">
               <div className="card col-sm-12 col-md-4">
                   <div className="card-header text-white ">
                       <div className=" justify-content-center">
-                          <h5 className="card_title">Client List</h5>
+                          <h5 className="card_title">Client List Of {salespersonClient.first_name}</h5>
                       </div>
                   </div>
                   <div className="list mt-4 ">
@@ -164,7 +180,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                               </div>
                           ))
                       ) : (
-                          <div className="text-center">No Client</div>
+                          <div className="text-center text-white">No Client</div>
                       )}
                   </div>
               </div>
@@ -242,7 +258,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                      </>                                                   
                                                     ))
                                                 ):(
-                                                    <tr>No Data in In progress</tr>
+                                                    <tr className='text-center'>No Data in In progress</tr>
                                                 )
                                             }
                                         </tbody>
@@ -264,13 +280,22 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                             </tr>
                                         </thead>
                                         <tbody className='text-uppercase'>
-                                            <tr>
-                                                <td>Nitesh Chauhan</td>
-                                                <td>info.nitesh@gmail.com</td>
-                                                <td>8789779098</td>
-                                                <td>TI/24-25/230</td>
-                                                {/* <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td> */}
-                                            </tr>
+                                            {
+                                                Array.isArray(successfullead) && successfullead.length >0 ?(
+                                                    successfullead.map((successlead,index)=>(
+                                                        <tr>
+                                                            <td>{successlead.fullname}</td>
+                                                            <td>{successlead.email}</td>
+                                                            <td>{successlead.phone}</td>
+                                                            <td>{successlead.invoice_number}</td>
+                                                            {/* <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td> */}
+                                                        </tr> 
+                                                    ))
+                                                ):(
+                                                    <tr>No Data in Successful</tr>
+                                                )
+                                            }
+
                                         </tbody>
                                     </table>
                                 </div>

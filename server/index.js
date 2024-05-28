@@ -158,9 +158,9 @@ app.get('/total-closed-lead',(req,res)=>{
     con.query(sqlGetTotalclosed,(err,result)=>{
         if (err) {
             res.status(500).send({message:"Internal Server in total closed lead api"})
-            } else {
-                res.send(result)
-                }
+        } else {
+            res.send(result)
+        }
     })
 })
 // Get Total In Process 
@@ -187,6 +187,20 @@ app.post('/successful-lead',(req,res)=>{
         }
     })
 })
+// Get Successful Lead Data
+app.get('/successful-lead-data/:sales_unique_id',(req,res)=>{
+    const{sales_unique_id} = req.params;
+    const sqlGetSuccessfulLeadData = `SELECT * FROM successful_lead WHERE sales_person_id = ?`;
+    con.query(sqlGetSuccessfulLeadData,[sales_unique_id],(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server in successful lead data api"})
+        } else {
+            res.send(result)
+        }
+    });
+})
+
+
 app.listen(3003,'192.168.1.10',()=>{
     console.log('Server is running on port 3003');
 })

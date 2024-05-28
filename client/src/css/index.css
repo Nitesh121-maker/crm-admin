@@ -4,7 +4,8 @@
     width: 100%;
  }
  .left-side-menu{
-    width: 18%;
+    /* width: 18%; */
+    display: none;
  }
  /* .page-container{
     width: 100%;
@@ -49,7 +50,7 @@ ul{
 }
 
 .main-content{
-    width: 82%;
+    width: 100%;
     background: #1c1c2f;
     color: #fff;
     position: relative;
@@ -87,7 +88,7 @@ ul{
     height: 30px;
     text-align: center;
     line-height: 30px;
-    padding-top: 10px;
+    /* padding-top: 10px; */
 }
 .pull-left{
     float: left !important;
@@ -317,4 +318,17 @@ label{  color: #fff !important;
     padding: 15px 10px !important;
     font-size: 12px;
     font-weight: 500;
+}
+.custom-placeholder::placeholder {
+    color: #fff !important; /* Change this to your desired color */
+    opacity: 1; /* Ensure the opacity is set to 1 for consistent color */
+}
+/* Footer */
+.footer-custom {
+    background: #1c1c35;
+    border-bottom: 1px solid #32365a;
+    padding: 0 0 0 30px;
+    /* background: #fff; */
+    position: relative;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);
 }

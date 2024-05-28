@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import '../css/index.css'
-import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt } from 'react-icons/fa';
+import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt, FaBell} from 'react-icons/fa';
 import Salesperson from './sales-person';
 import Status from './Status';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -18,6 +18,7 @@ const Index = () => {
     const[status,setStatus] = useState(false);
     const[total,setTotal] = useState('');
     const[clientDetails, setclientdetails] = useState('');
+    const[totalclosed, setTotalclosed] = useState('');
     const handleSalesperson =(clients)=>{
         setSalesperson(true);
         setIndex(false)
@@ -74,6 +75,7 @@ const Index = () => {
         }
         getTeam();
     }, []);
+    // Total Sale
    useEffect(() => {
       const getTotal = async(e) =>{
         try {
@@ -82,13 +84,33 @@ const Index = () => {
                 throw new Error(`HTTP error! Status: ${response.status}`)
             }
             const data =await response.json();
-
+            console.log('Total Sale',data)
+            setTotal(data);
         } catch (error) {
             console.log('error')
         }
       }
       getTotal();
    }, []);
+   // Total Closed Leads
+   useEffect(() => {
+      const getTotalclosed = async()=>{
+        try {
+            const responce = await fetch('http://192.168.1.10:3003/total-closed-lead');
+            if (!responce.ok) {
+                throw new Error(`HTTP error! Status: ${responce.status}`)
+                }
+                const data =await responce.json();
+                console.log('Total Closed Leads',data)
+                setTotalclosed(data);
+        } catch (error) {
+             console.log('error')
+        }
+      }
+      getTotalclosed();
+   }, []);  
+   const Total = total.length||0;
+   const Closedlead = totalclosed.length||0;
   return (
     <div className="page-container-darker">
         <div className="left-side-menu">
@@ -111,21 +133,22 @@ const Index = () => {
         </div>
         <div className="main-content">
              <div className='header-area'>
-                 <div className="align-items-center row">
+                 <div className=" D-flex align-items-center row ">
                     <div className="header-nav-left align-items-center D-flex">
                          <div className="nav-btn pull-left">
+                            {/* <span></span>
                             <span></span>
-                            <span></span>
-                            <span></span>
+                            <span></span> */}
+                            <h3>Tradeimex</h3>
                          </div>
-                         <div className="search-box pull-left">
+                         {/* <div className="search-box pull-left">
                             <form action="" method="post">
                                 <input type="text" name="search" placeholder="Search..."></input>
                             </form>
-                         </div>
+                         </div> */}
                     </div>
                     <div className="header-nav-right">
-
+                         <button><FaBell/></button>
                     </div>
                  </div>
              </div>
@@ -156,7 +179,7 @@ const Index = () => {
                                       <div className="card-content">
                                           <div className="card-content-title">
                                               <p>Total Sale</p>
-                                              <h3>200</h3>
+                                              <h3>{Total}</h3>
                                           </div>
                                       </div>
                                   </div>
@@ -168,7 +191,7 @@ const Index = () => {
                                       <div className="card-content">
                                           <div className="card-content-title">
                                               <p>Total Closed Leads</p>
-                                              <h3>200</h3>
+                                              <h3>{Closedlead}</h3>
                                           </div>
                                       </div>
                                   </div>
@@ -200,25 +223,25 @@ const Index = () => {
                                               <div className="row form-group">
                                                   <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person First Name</label>
                                                   <div className="col-sm-12">
-                                                      <input type="text" placeholder='First name' name='first_name' value={formData.first_name} onChange={handleChange} className='form-control' />
+                                                      <input type="text" placeholder='First name' name='first_name' value={formData.first_name} onChange={handleChange} className='form-control custom-placeholder' />
                                                   </div>
                                               </div>
                                               <div className="row form-group">
                                                   <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Last Name</label>
                                                   <div className="col-sm-12">
-                                                      <input type="text" placeholder='Last name' name='last_name' value={formData.last_name} onChange={handleChange} className='form-control' />
+                                                      <input type="text" placeholder='Last name' name='last_name' value={formData.last_name} onChange={handleChange} className='form-control custom-placeholder' />
                                                   </div>
                                               </div>
                                               <div className="row form-group">
                                                   <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Email</label>
                                                   <div className="col-sm-12">
-                                                      <input type="email" placeholder='email' name='email' value={formData.email} onChange={handleChange} className='form-control' />
+                                                      <input type="email" placeholder='Email' name='email' value={formData.email} onChange={handleChange} className='form-control custom-placeholder' />
                                                   </div>
                                               </div>
                                               <div className="row form-group">
                                                   <label htmlFor="" className='col-sm-12 col-form-label'>Sales Person Password</label>
                                                   <div className="col-sm-12">
-                                                      <input type="password" placeholder='pass' name='password' value={formData.password} onChange={handleChange} className='form-control' />
+                                                      <input type="password" placeholder='Password' name='password' value={formData.password} onChange={handleChange} className='form-control custom-placeholder' />
                                                   </div>
                                               </div>
                                               <button type="submit" className='btn-submit'>Submit</button>
@@ -288,7 +311,11 @@ const Index = () => {
                     <Status clientDetails={clientDetails} salespersonClient={salespersonClient} handleSalesperson={handleSalesperson}/>
                 </div>
                 }
+                
              </div>
+             <div className="row footer-custom">
+                <Footer/>
+            </div>
         </div>
     </div>
   )
