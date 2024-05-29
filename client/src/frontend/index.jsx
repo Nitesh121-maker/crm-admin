@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import '../css/index.css'
-import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt, FaBell} from 'react-icons/fa';
+import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt, FaBell,FaSignOutAlt} from 'react-icons/fa';
 import Salesperson from './sales-person';
 import Status from './Status';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -19,6 +19,11 @@ const Index = () => {
     const[total,setTotal] = useState('');
     const[clientDetails, setclientdetails] = useState('');
     const[totalclosed, setTotalclosed] = useState('');
+    const[showNotification,setshowNotification] = useState(false);
+
+    const handleshowNotification = () =>{
+        setshowNotification(prevState => !prevState);
+    }
     const handleSalesperson =(clients)=>{
         setSalesperson(true);
         setIndex(false)
@@ -133,24 +138,63 @@ const Index = () => {
         </div>
         <div className="main-content">
              <div className='header-area'>
-                 <div className=" D-flex align-items-center row ">
-                    <div className="header-nav-left align-items-center D-flex">
-                         <div className="nav-btn pull-left">
-                            {/* <span></span>
-                            <span></span>
-                            <span></span> */}
+                <div className="align-items-center row">
+                    <div className="col-md-6 d-flex align-items-center">
+                        <div className="d-flex align-items-center nav-btn me-auto">
                             <h3>Tradeimex</h3>
-                         </div>
-                         {/* <div className="search-box pull-left">
+                        </div>
+                        {/* Uncomment and use if needed */}
+                        {/* 
+                        <div className="search-box ms-3">
                             <form action="" method="post">
-                                <input type="text" name="search" placeholder="Search..."></input>
+                                <input type="text" name="search" placeholder="Search..." className="form-control" />
                             </form>
-                         </div> */}
+                        </div> 
+                        */}
                     </div>
-                    <div className="header-nav-right">
-                         <button><FaBell/></button>
+                    <div className="col-md-6 col-sm-12">
+                        <ul className='notification-area d-flex justify-content-end list-unstyled mb-0 mr-12'>
+                          
+                            <li className='dropdown show me-auto-custom'>
+                                
+                                <span><FaBell onClick={handleshowNotification}/></span>
+                                {
+                                    showNotification&&
+
+                                    <div 
+                                        tabIndex="-1" 
+                                        role="menu" 
+                                        aria-hidden="false" 
+                                        className="dropdown-menu bell-notify-box notify-box dropdown-menu show notification-card" 
+                                        style={{ backgroundColor: '#181831', color: '#ffffff', borderRadius: '0.5rem' }}
+                                    >
+                                        <span className="notify-title d-block mb-2" style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
+                                        You have 3 new notifications 
+                                    </span>
+                                    <div className='notification-card-content-tab'>
+                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
+                                            Invoice generated for Nitesh
+                                        </div>
+                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
+                                            Invoice generated for Prashant
+                                        </div>
+                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
+                                            Invoice generated for Shakti
+                                        </div>
+                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
+                                            Invoice generated for Luckey
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </li>
+                            <li className='user-dropdown me-auto-custom'>
+                                <FaSignOutAlt/>
+                            </li>
+                        </ul>
+                        {/* <button className="btn btn-link"><FaBell /></button> */}
                     </div>
-                 </div>
+                </div>
              </div>
              <div className="main-content-inner">
                 <div className="sub-header">

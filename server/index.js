@@ -169,9 +169,9 @@ app.get('/total-in-process',(req,res)=>{
     console.query(sqlGetinprocess,(err,result)=>{
         if (err) {
             res.status(500).send({message:"Internal Server in total in process api"})
-            } else {
-                res.send(result)
-            }
+        } else {
+            res.send(result)
+        }
     })
 })
 // Set Successful Table
