@@ -199,8 +199,36 @@ app.get('/successful-lead-data/:sales_unique_id',(req,res)=>{
         }
     });
 })
-
-
+// Get Notification
+app.get('/notification',(req,res)=>{
+  
+    const sqlGetNotification = `SELECT * FROM invoice WHERE seen = 0 ORDER BY id DESC `;
+    con.query(sqlGetNotification,(err,result)=>{
+        if (err) {
+            res.status(500).send({message:"Internal Server in notification api"})
+            console.log(err)
+        } else {
+            res.send(result)
+            console.log('Notification',result)
+        }
+    });
+})
+// Update state of seen
+app.post('/update-seen/:unique_id', (req, res) => {
+    const { unique_id } = req.params;
+    const sqlUpdateSeen = `UPDATE invoice SET seen = 1 WHERE unique_id = ?`;
+    
+    con.query(sqlUpdateSeen, [unique_id], (err, result) => {
+      if (err) {
+        res.status(500).send({ message: "Internal Server Error in notification API" });
+        console.log(err);
+      } else {
+        res.send({ message: 'Seen status updated', result });
+        console.log(result)
+      }
+    });
+  });
+  
 app.listen(3003,'192.168.1.10',()=>{
     console.log('Server is running on port 3003');
 })

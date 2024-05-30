@@ -20,7 +20,9 @@ const Index = () => {
     const[clientDetails, setclientdetails] = useState('');
     const[totalclosed, setTotalclosed] = useState('');
     const[showNotification,setshowNotification] = useState(false);
-
+    const[notification,setnotification] = useState('')
+    // const sales_person_id = team.unique_id;
+    // console.log('Team',team)
     const handleshowNotification = () =>{
         setshowNotification(prevState => !prevState);
     }
@@ -116,6 +118,56 @@ const Index = () => {
    }, []);  
    const Total = total.length||0;
    const Closedlead = totalclosed.length||0;
+
+   //    Get Notification
+   useEffect(() => {
+    const getNotification = async () => {
+      try {
+        const response = await fetch('http://192.168.1.10:3003/notification');
+        
+        if (!response.ok) {
+          // Log the status text from the response
+          throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Notification data', data);
+        setnotification(data);
+      } catch (error) {
+        // Log the error message for more details
+        console.error('Error fetching notifications:', error.message);
+      }
+    };
+
+    getNotification();
+  }, []);
+
+  //Update seen
+  const handleUpdateSeen = async (notification) => {
+    // e.preventDefault();
+    if (!notification) {
+      console.error('Notification is undefined');
+      return;
+    }
+
+    const unique_id = notification.unique_id;
+    console.log('Unique Id', unique_id);
+    try {
+      const response = await fetch(`http://192.168.1.10:3003/update-seen/${unique_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      console.log('Update seen', data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+ 
   return (
     <div className="page-container-darker">
         <div className="left-side-menu">
@@ -157,7 +209,29 @@ const Index = () => {
                           
                             <li className='dropdown show me-auto-custom'>
                                 
-                                <span><FaBell onClick={handleshowNotification}/></span>
+                                <span><FaBell onClick={handleshowNotification}/>
+                                {notification.length > 0 && (
+                                <span
+                                    style={{
+                                        position: 'absolute',
+                                        top: '-13px',
+                                        right: '-15px',
+                                        backgroundColor: 'red',
+                                        color: 'white',
+                                        borderRadius: '50%',
+                                        width: '20px',
+                                        height: '20px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        fontSize: '14px',
+                                        cursor:'pointer',
+                                    }}
+                                    >
+                                    {notification.length}
+                                    </span>
+                                )}
+                                </span>
                                 {
                                     showNotification&&
 
@@ -169,21 +243,23 @@ const Index = () => {
                                         style={{ backgroundColor: '#181831', color: '#ffffff', borderRadius: '0.5rem' }}
                                     >
                                         <span className="notify-title d-block mb-2" style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-                                        You have 3 new notifications 
+                                        You have {notification.length} new notifications 
                                     </span>
                                     <div className='notification-card-content-tab'>
-                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
-                                            Invoice generated for Nitesh
-                                        </div>
-                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
-                                            Invoice generated for Prashant
-                                        </div>
-                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
-                                            Invoice generated for Shakti
-                                        </div>
-                                        <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
-                                            Invoice generated for Luckey
-                                        </div>
+                                        {
+                                            Array.isArray(notification) && notification.length>0 ?(
+                                               notification.map((notification,index)=>(                                             
+                                                    <div  className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem',cursor:'pointer' }}>
+                                                        <p>Invoice generated for {notification.company}</p>
+                                                        <button type="button" className='btn btn-primary' onClick={()=>handleUpdateSeen(notification)}>View</button>
+                                                    </div>
+                                               ))
+                                            ):(
+                                                <div className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem' }}>
+                                                     No Notification
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                 </div>
                                 }
