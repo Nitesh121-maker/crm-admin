@@ -3,10 +3,15 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const session = require('express-session')
 
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(session({
+    secret: 'admin-secret',
+    resave: false,
+    saveUninitialized:true,
+}))
 
 const con = mysql.createConnection(
     {
@@ -19,6 +24,61 @@ const con = mysql.createConnection(
 function twodigitrandom(){
     return Math.floor(10 + Math.random() * 100);
 }
+// Login
+app.post('/admin-login', (req, res) => {
+    const{email,password} = req.body;
+    const sqlFilter = `SELECT * FROM admin WHERE email = ? AND password = ?`;
+    
+    con.query(sqlFilter, [email,password], (err, result) => {
+        if (err) {
+            res.status(500).send({message:'Internal error in login query'})
+            console.log(err)
+        }else if(result.length > 0){
+            const user =  result[0];
+            req.session.user = user;
+            res.status(200).send({message:"Login Successful.",user:user});
+            
+        }else{
+            res.send({message: "Invalid username or password."});
+        }
+    })
+})
+// Register
+app.post('/admin-signin', (req, res) => {
+    const { name, phone, email, password } = req.body;
+    const sqlCheck = `SELECT * FROM admin WHERE email = ? AND password = ?`;
+
+    const sqlRegister = `INSERT INTO admin (name, phone, email, password) VALUES (?, ?, ?, ?)`;
+
+    con.query(sqlCheck, [email, password], (err, result) => {
+        if (err) {
+            res.status(500).send({ message: 'Internal Server Error in Sql Check' });
+            console.log(err);
+        } else if (result.length > 0) {
+            res.status(200).send({ message: 'This Admin Already Registered' });
+        } else {
+            con.query(sqlRegister, [name, phone, email, password], (err, result) => {
+                if (err) {
+                    res.status(500).send({ message: 'Internal Server error' });
+                    console.log(err);
+                } else {
+                    res.status(200).send({ message: 'Admin Registered Successfully' });
+                }
+            });
+        }
+    });
+});
+// Logout
+app.post('/admin-logout',(req,res)=>{
+    req.session.destroy((err) => {
+    if (err) {
+        res.status(500).send({message:'Internal error in logout query'})
+        console.log(err)
+    }else{
+        res.status(200).send({message:'Logout Successful.'})
+    }
+})
+})
 // Add new sales person
 app.post('/create-sales-person',(req,res)=>{
    const {first_name,last_name,email,password} = req.body;

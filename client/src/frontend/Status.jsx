@@ -78,7 +78,6 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                                             <li>No Data</li>
                                         </ul>
                                     )}
-
                                 </div>
                            </div>
                     </div>
@@ -86,6 +85,7 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                            <div className="card">
                                 <div className="card-body text-white">
                                     <h4 className="card_title text-white">Payment Status</h4>
+                                    <button className='btn btn-primary'>Preview Invoice</button>
                                     <form action="" className='form' onSubmit={handleSetAmount}>
                                         <div className="form-group ">
                                             <input type="text" className='form-control' name='amount' value={amount.amount} onChange={handlechangeAmount}/>
