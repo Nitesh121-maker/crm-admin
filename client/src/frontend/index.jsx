@@ -53,7 +53,7 @@ const Index = () => {
         e.preventDefault();
         console.log('Form Data',formData);
         try {
-            const response = await fetch('http://192.168.1.10:3003/create-sales-person',{
+            const response = await fetch('http://192.168.1.11:3003/create-sales-person',{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body:JSON.stringify(formData)
@@ -70,7 +70,7 @@ const Index = () => {
     useEffect(() => {
         const getTeam = async() =>{
             try {
-                const response = await fetch('http://192.168.1.10:3003/sales-team');
+                const response = await fetch('http://192.168.1.11:3003/sales-team');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`)
                 }
@@ -86,7 +86,7 @@ const Index = () => {
    useEffect(() => {
       const getTotal = async(e) =>{
         try {
-            const response = await fetch('http://192.168.1.10:3003/total-sale');
+            const response = await fetch('http://192.168.1.11:3003/total-sale');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`)
             }
@@ -103,7 +103,7 @@ const Index = () => {
    useEffect(() => {
       const getTotalclosed = async()=>{
         try {
-            const responce = await fetch('http://192.168.1.10:3003/total-closed-lead');
+            const responce = await fetch('http://192.168.1.11:3003/total-closed-lead');
             if (!responce.ok) {
                 throw new Error(`HTTP error! Status: ${responce.status}`)
                 }
@@ -123,7 +123,7 @@ const Index = () => {
    useEffect(() => {
     const getNotification = async () => {
       try {
-        const response = await fetch('http://192.168.1.10:3003/notification');
+        const response = await fetch('http://192.168.1.11:3003/notification');
         
         if (!response.ok) {
           // Log the status text from the response
@@ -153,7 +153,7 @@ const Index = () => {
     const unique_id = notification.unique_id;
     console.log('Unique Id', unique_id);
     try {
-      const response = await fetch(`http://192.168.1.10:3003/update-seen/${unique_id}`, {
+      const response = await fetch(`http://192.168.1.11:3003/update-seen/${unique_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -180,8 +180,9 @@ const Index = () => {
         setAdminlogedin(false)
     }
    }, []);
-   const handlenotificationView = () =>{
-
+   const handlenotificationView = (notification) =>{
+    // handleUpdateSeen(notification);
+    handleStatus(notification)
    }
   return (
     <>
@@ -269,7 +270,7 @@ const Index = () => {
                                                 notification.map((notification,index)=>(                                             
                                                         <div  className="notify-content p-2 mb-2" style={{ backgroundColor: '#282a36', borderRadius: '0.25rem',cursor:'pointer' }}>
                                                             <p>Invoice generated for {notification.company}</p>
-                                                            <button type="button" className='btn btn-primary' onClick={()=>handleUpdateSeen(notification)}>View</button>
+                                                            <button type="button" className='btn btn-primary' onClick={()=>handlenotificationView(notification)}>View</button>
                                                         </div>
                                                 ))
                                                 ):(
@@ -412,7 +413,7 @@ const Index = () => {
                                                                         <tr>
                                                                             <td>{teamInfo.first_name}  {teamInfo.last_name}</td>
                                                                             <td>{teamInfo.email}</td>
-                                                                            <td>{teamInfo.unique_id}</td>
+                                                                            <td>{teamInfo.sales_person_id}</td>
                                                                             <td><button className="btn btn-info" onClick={()=>handleSalesperson(teamInfo)}><FaExternalLinkAlt /></button></td>
                                                                             <td>
                                                                                 <ul className='d-flex justify-content-center'>

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { FaStepBackward, FaArrowLeft } from 'react-icons/fa'
 const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
     console.log('clientDetails',clientDetails)
+    salespersonClient=clientDetails;
     console.log('salespersonClient',salespersonClient)
     const[errormessage,seterrormessage] = useState('');
     const[message,setMessage] = useState('');
@@ -17,7 +18,7 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
     const handleSetAmount = async(e) =>{
         e.preventDefault();
         try {
-            const responce = await fetch('http://192.168.1.10:3003/successful-lead',{
+            const responce = await fetch('http://192.168.1.11:3003/successful-lead',{
                 method:'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({               
