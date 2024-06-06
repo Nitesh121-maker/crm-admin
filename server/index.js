@@ -260,23 +260,42 @@ app.get('/successful-lead-data/:sales_unique_id',(req,res)=>{
     });
 })
 // Get Notification
-app.get('/notification',(req,res)=>{
-  
-    const sqlGetNotification = `SELECT * FROM invoice WHERE seen = 0 ORDER BY id DESC `;
-    con.query(sqlGetNotification,(err,result)=>{
+app.get('/notification', (req, res) => {
+    const sqlGetNotification = `SELECT * FROM invoice WHERE seen = 0 ORDER BY id DESC`;
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const sqlGetReminders = `SELECT * FROM invoice WHERE seen = 0 AND (reminded IS NULL OR reminded < ?)`;
+
+    con.query(sqlGetNotification, (err, result) => {
         if (err) {
-            res.status(500).send({message:"Internal Server in notification api"})
-            console.log(err)
+            res.status(500).send({ message: "Internal Server Error in notification API" });
+            console.log(err);
         } else {
-            res.send(result)
-            console.log('Notification',result)
+            con.query(sqlGetReminders, [oneDayAgo], (err, reminderResult) => {
+                if (err) {
+                    res.status(500).send({ message: 'Internal Server Error in reminder API' });
+                    console.log(err);
+                } else {
+                    // Combine the results or send as needed
+                    res.send({ notifications: result, reminders: reminderResult });
+                    console.log('Notifications:', result);
+                    console.log('Reminders:', reminderResult);
+                }
+            });
         }
     });
-})
+});
+
+
+// // Renotify 
+// app.get('/renotify',(req,res)=>{
+//     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+//     const sqlGetReminders = `SELECT * FROM invoice WHERE seen = 0 AND last_reminded 0`;
+
+// })
 // Update state of seen
 app.post('/update-seen/:unique_id', (req, res) => {
     const { unique_id } = req.params;
-    const sqlUpdateSeen = `UPDATE invoice SET seen = 1 WHERE unique_id = ?`;
+    const sqlUpdateSeen = `UPDATE invoice SET seen = 1 , reminded = 1 WHERE unique_id = ?`;
     
     con.query(sqlUpdateSeen, [unique_id], (err, result) => {
       if (err) {
@@ -288,7 +307,18 @@ app.post('/update-seen/:unique_id', (req, res) => {
       }
     });
   });
-  
+//   Get client data from invoice
+app.get('/client-invoice/:unique_id',(req,res)=>{
+    const{unique_id} = req.params;
+    const sqlInvoicedata = `SELECT * FROM invoice WHERE unique_id = ?`;
+    con.query(sqlInvoicedata,[unique_id],(err,result)=>{
+        if (err) {
+             res.status(500).send({message:'Internal servaer error in client-invoice api'});
+        } else {
+            res.send(result)
+        }   
+    })
+})
 app.listen(3003,'192.168.1.11',()=>{
     console.log('Server is running on port 3003');
 })

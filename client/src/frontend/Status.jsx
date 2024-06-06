@@ -1,10 +1,12 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import { FaStepBackward, FaArrowLeft } from 'react-icons/fa'
 const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
     console.log('clientDetails',clientDetails)
     salespersonClient=clientDetails;
     console.log('salespersonClient',salespersonClient)
+    const[invoicedata,setinvoicedata] = useState('');
+    const unique_id=clientDetails.unique_id;
     const[errormessage,seterrormessage] = useState('');
     const[message,setMessage] = useState('');
     const[amount,setamont]= useState({
@@ -48,7 +50,22 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
     const handleButtonClick = () => {
         handleSalesperson(salespersonClient);
     }
-
+    useEffect(() => {
+        const getclientInvoice = async(e) =>{
+            try {
+                const response = await fetch(`http://192.168.1.11:3003/client-invoice/${unique_id}`);
+                if(!response.ok){
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setinvoicedata(data);
+                console.log('Invoice data',data);
+            } catch (error) {
+                seterrormessage(error)
+            }
+        } 
+        getclientInvoice();
+    }, []);
   return (
     <div className='row'>
         <div className="col-lg-12 col-md-12">
@@ -66,19 +83,26 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                            <div className="card">
                                 <div className="card-body text-white">
                                     <h4 className='card_title'>User Details:</h4>
-                                    {clientDetails ? (
-                                        <ul>
-                                            <li>Name: {clientDetails.fullname}</li>
-                                            <li>Email: {clientDetails.email}</li>
-                                            <li>Phone: {clientDetails.number}</li>
-                                            <li>Invoice: {clientDetails.invoice_number}</li>
-                                            <li>Invoice: {clientDetails.invoice_date}</li>
-                                        </ul>
+                                    {
+                                    invoicedata.length > 0 ? (
+                                        invoicedata.map((invoice, index) => (
+                                        <div key={index}>
+                                            <ul>
+                                            <li>Name: {invoice.fullname}</li>
+                                            <li>Email: {invoice.email}</li>
+                                            <li>Phone: {invoice.number}</li>
+                                            <li>Invoice No.: {invoice.invoice_number}</li>
+                                            <li>Invoice Date: {invoice.invoice_date}</li>
+                                            <li>Invoice Status: {invoice.status}</li>
+                                            </ul>
+                                        </div>
+                                        ))
                                     ) : (
                                         <ul>
-                                            <li>No Data</li>
+                                        <li>No Data</li>
                                         </ul>
-                                    )}
+                                    )
+                                    }
                                 </div>
                            </div>
                     </div>
@@ -86,7 +110,10 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                            <div className="card">
                                 <div className="card-body text-white">
                                     <h4 className="card_title text-white">Payment Status</h4>
-                                    <button className='btn btn-primary'>Preview Invoice</button>
+                                    <a href={`http://192.168.1.11:3002/downloads/${unique_id}.pdf`}>
+                                        <button className='btn btn-primary'>Preview Invoice</button>
+                                    </a>
+
                                     <form action="" className='form' onSubmit={handleSetAmount}>
                                         <div className="form-group ">
                                             <input type="text" className='form-control' name='amount' value={amount.amount} onChange={handlechangeAmount}/>

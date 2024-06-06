@@ -126,15 +126,17 @@ const Index = () => {
         const response = await fetch('http://192.168.1.11:3003/notification');
         
         if (!response.ok) {
-          // Log the status text from the response
           throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
         }
 
         const data = await response.json();
         console.log('Notification data', data);
-        setnotification(data);
+        const notifications = data.notifications;
+        console.log('Notifications',notifications);
+        const reminders = data.reminders;
+        const notification = [...notifications,...reminders];
+        setnotification(notification);
       } catch (error) {
-        // Log the error message for more details
         console.error('Error fetching notifications:', error.message);
       }
     };
@@ -181,7 +183,7 @@ const Index = () => {
     }
    }, []);
    const handlenotificationView = (notification) =>{
-    // handleUpdateSeen(notification);
+    handleUpdateSeen(notification);
     handleStatus(notification)
    }
   return (
