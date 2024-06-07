@@ -66,6 +66,12 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
         } 
         getclientInvoice();
     }, []);
+
+    const [amountset,setAmountsetting] = useState(false);
+
+    const handleAmount =()=>{
+        setAmountsetting((prevState) => !prevState)
+    }
   return (
     <div className='row'>
         <div className="col-lg-12 col-md-12">
@@ -79,50 +85,93 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                     </button>
                 </div>
                 <div className="card-body d-flex">
-                    <div className="col-lg-6 ">
+                    <div className={`col-lg-${amountset ? '10' : '12'}`}>
                            <div className="card">
                                 <div className="card-body text-white">
                                     <h4 className='card_title'>User Details:</h4>
-                                    {
-                                    invoicedata.length > 0 ? (
-                                        invoicedata.map((invoice, index) => (
-                                        <div key={index}>
-                                            <ul>
-                                            <li>Name: {invoice.fullname}</li>
-                                            <li>Email: {invoice.email}</li>
-                                            <li>Phone: {invoice.number}</li>
-                                            <li>Invoice No.: {invoice.invoice_number}</li>
-                                            <li>Invoice Date: {invoice.invoice_date}</li>
-                                            <li>Invoice Status: {invoice.status}</li>
-                                            </ul>
-                                        </div>
-                                        ))
-                                    ) : (
-                                        <ul>
-                                        <li>No Data</li>
-                                        </ul>
-                                    )
-                                    }
-                                </div>
-                           </div>
-                    </div>
-                    <div className="col-lg-6">
-                           <div className="card">
-                                <div className="card-body text-white">
-                                    <h4 className="card_title text-white">Payment Status</h4>
-                                    <a href={`http://192.168.1.11:3002/downloads/${unique_id}.pdf`}>
-                                        <button className='btn btn-primary'>Preview Invoice</button>
-                                    </a>
+                                    <div className="inprogress single-table">
+                                        <div className="responsive">
+                                            <table className="table table-hover text-white progress-table text-center table">
+                                                <thead className="thead-light text-uppercase">
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Email</th>
+                                                        <th scope="col">Phone</th>
+                                                        <th scope="col">Invoice No.</th>
+                                                        <th scope="col">Invoice Date:</th>
+                                                        <th scope="col">Invoice Status:</th>
+                                                        <th scope='col'>Preview</th>
+                                                        <th scope='col'>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className='text-uppercase'>
+                                                    {
+                                                        invoicedata.length > 0 ? (
+                                                            invoicedata.map((invoice, index) => (
 
-                                    <form action="" className='form' onSubmit={handleSetAmount}>
-                                        <div className="form-group ">
-                                            <input type="text" className='form-control' name='amount' value={amount.amount} onChange={handlechangeAmount}/>
-                                            <button type="submit" className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary mt-4'>Set Ammount</button>
+                                                                <tr>
+                                                                    <td>{invoice.fullname}</td>
+                                                                    <td>{invoice.email}</td>
+                                                                    <td>{invoice.number}</td>
+                                                                    <td>{invoice.invoice_number}</td>
+                                                                    <td>{invoice.invoice_date}</td>
+                                                                    {   invoice.status == 'Sent' ?(
+                                                                        <td>{invoice.status}</td>
+                                                                    ):(
+                                                                        <td>Not sent yet</td>
+                                                                    )
+                                                                       
+                                                                    }
+                                                                    {
+                                                                        invoice.status == 'Sent' ?(
+                                                                            <td>
+                                                                                <a href={`http://192.168.1.11:3002/downloads/${invoice.unique_id}.pdf`} 
+                                                                                className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' 
+                                                                                target="_blank" 
+                                                                                rel="noopener noreferrer">
+                                                                                    Preview
+                                                                                </a>
+                                                                            </td>
+                                                                        
+                                                                        ):(
+                                                                           <td>Unavailable</td>
+                                                                        )
+                                                                    }
+                                                                    <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' onClick={handleAmount}>Set Amount</button></td>                                                      
+                                                                </tr>
+                                                            ))
+                                                        ) : (
+                                                            <ul>
+                                                            <li>No Data</li>
+                                                            </ul>
+                                                        )
+                                                    }
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                            </div>
                     </div>
+                    {amountset&&
+                        <div className="col-lg-2">
+                            <div className="card">
+                                    <div className="card-body text-white">
+                                        <h4 className="card_title text-white">Payment Status</h4>
+                                        {/* <a >
+                                            <button className='btn btn-primary'>Preview Invoice</button>
+                                        </a> */}
+    
+                                        <form action="" className='form' onSubmit={handleSetAmount}>
+                                            <div className="form-group ">
+                                                <input type="text" className='form-control' name='amount' value={amount.amount} onChange={handlechangeAmount}/>
+                                                <button type="submit" className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary mt-4'>Set Ammount</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                            </div>
+                        </div>
+                    }
                 </div>
              </div>
         </div>

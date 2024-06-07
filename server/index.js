@@ -238,12 +238,22 @@ app.get('/total-in-process',(req,res)=>{
 app.post('/successful-lead',(req,res)=>{
     const{sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount} = req.body;
     const sqlUpdate = `INSERT INTO successful_lead (sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount) VALUES(?,?,?,?,?,?,?,?,?) `;
+    const sqlSetsale = `INSERT INTO sales (sales_person_id,client_id,amount) VALUES (?,?,?)`;
+
+
     con.query(sqlUpdate,[sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount],(err,result)=>{
         if (err) {
             res.status(500).send({message:"Internal Server in successful lead api"})
             console.log(err)
         } else {
-            res.send({message:"Successful Lead Added Successfully"})
+            con.query(sqlSetsale,[sales_person_id,unique_id,amount],(err,result)=>{
+                if (err) {
+                    res.status(500).send({message:"Internal Server in successful lead api sales table data setting"})
+                    console.log(err)
+                } else {
+                    res.send({message:"Successful Lead Added Successfully"})
+                }
+            })
         }
     })
 })
