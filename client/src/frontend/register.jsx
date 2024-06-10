@@ -18,7 +18,7 @@ const Register = () => {
         console.log(registerForm);
         e.preventDefault();
         try {
-            const response = await fetch('http://192.168.1.11:3003/admin-signin',{
+            const response = await fetch('http://192.168.1.13:3003/admin-signin',{
                 method:'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(registerForm)

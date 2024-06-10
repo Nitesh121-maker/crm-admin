@@ -228,8 +228,19 @@ app.get('/total-in-process',(req,res)=>{
     const sqlGetinprocess = `SELECT * FROM new_lead`;
     console.query(sqlGetinprocess,(err,result)=>{
         if (err) {
-            res.status(500).send({message:"Internal Server in total in process api"})
+            res.status(500).send({message:"Internal Server Error in total in process api"})
         } else {
+            res.send(result)
+        }
+    })
+})
+// Get Total generated Invoice
+app.get('/total-generated-invoice',(req,res)=>{
+    const sqlGeneratedinvoice = `SELECT * FROM invoice`;
+    con.query(sqlGeneratedinvoice,(err,result)=>{
+        if(err){
+            res.status(500).send({message:'Internal Server Error in total in total generated invoice'})
+        }else{
             res.send(result)
         }
     })
@@ -239,7 +250,6 @@ app.post('/successful-lead',(req,res)=>{
     const{sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount} = req.body;
     const sqlUpdate = `INSERT INTO successful_lead (sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount) VALUES(?,?,?,?,?,?,?,?,?) `;
     const sqlSetsale = `INSERT INTO sales (sales_person_id,client_id,amount) VALUES (?,?,?)`;
-
 
     con.query(sqlUpdate,[sales_person_id,unique_id,fullname,email,phone,status,invoice_number,invoice_date,amount],(err,result)=>{
         if (err) {
@@ -329,6 +339,6 @@ app.get('/client-invoice/:unique_id',(req,res)=>{
         }   
     })
 })
-app.listen(3003,'192.168.1.11',()=>{
+app.listen(3003,'192.168.1.13',()=>{
     console.log('Server is running on port 3003');
 })

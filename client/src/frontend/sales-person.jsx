@@ -38,7 +38,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         const getClient = async () => {
             if (!sales_unique_id) return;
             try {
-                const response = await fetch(`http://192.168.1.11:3003/client-list/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.13:3003/client-list/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -55,7 +55,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const getChat = useCallback(async(unique_id) =>{
         
         try {
-            const response = await fetch(`http://192.168.1.11:3003/client-chat/${unique_id}`);
+            const response = await fetch(`http://192.168.1.13:3003/client-chat/${unique_id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -92,7 +92,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     const handleSendMessage = async(e)=>{
         e.preventDefault();
         try {
-            const response = await fetch(`http://192.168.1.11:3003/admin-message/${selectedClientId}`,{
+            const response = await fetch(`http://192.168.1.13:3003/admin-message/${selectedClientId}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
       if(!sales_unique_id) return;
       const getInprogress = async (e) =>{
         try {
-            const response = await fetch(`http://192.168.1.11:3003/sales-person-in-progress/${sales_unique_id}`);
+            const response = await fetch(`http://192.168.1.13:3003/sales-person-in-progress/${sales_unique_id}`);
             if(!response.ok){
                 throw new Error('Network response was not ok');
             }
@@ -135,7 +135,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         if (!sales_unique_id) return;
         const getClosedlead = async(e) =>{
             try {
-                const response = await fetch(`http://192.168.1.11:3003/sales-person-closed-client/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.13:3003/sales-person-closed-client/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                     }
@@ -151,7 +151,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
     useEffect(() => {
         const getSuccessfulLead = async()=>{
             try {
-                const response = await fetch(`http://192.168.1.11:3003/successful-lead-data/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.13:3003/successful-lead-data/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                     }
@@ -233,6 +233,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                 <li className='btn-rounded btn-fixed-w mb-3 mr-3 btn btn-outline-danger' onClick={handleClosed}>Closed</li>
                             </ul>
                         </div>
+                        {/* In-Progress Leads */}
                         {inprogress&&
                             <div className="inprogress single-table">
                                 <div className="responsive">
@@ -267,6 +268,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                 </div>
                             </div>
                         }
+                        {/* Successful Leads */}
                         {successful&&
                             <div className="successful single-table">
                                 <div className="responsive">
@@ -277,7 +279,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Phone</th>
                                                 <th scope='col'>Invoice</th>
-                                                {/* <th scope='col'>Action</th> */}
+                                                <th scope='col'>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody className='text-uppercase'>
@@ -289,7 +291,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                             <td>{successlead.email}</td>
                                                             <td>{successlead.phone}</td>
                                                             <td>{successlead.invoice_number}</td>
-                                                            {/* <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>status</button></td> */}
+                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>Data Deleivery Status</button></td>
                                                         </tr> 
                                                     ))
                                                 ):(
@@ -302,6 +304,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                 </div>
                             </div>
                         }
+                        {/* Closed Leads */}
                         {closed&&
                             <div className="closed single-table">
                                 <div className="responsive">
