@@ -339,6 +339,31 @@ app.get('/client-invoice/:unique_id',(req,res)=>{
         }   
     })
 })
+// Set Data delievery Status
+app.post('/client-data-status',(req,res)=>{
+    const{sales_person_id,unique_id,fullname,month,message} = req.body;
+    const sqlDatasendstatus = `INSERT INTO sent_data (sales_person_id,unique_id,fullname,month,message) VALUES (?,?,?,?,?)`;
+    con.query(sqlDatasendstatus,[sales_person_id,unique_id,fullname,month,message],(err,result)=>{
+        if (err) {
+            res.status(500).send({message:'Internal Server Error'})
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+// Get Delivered data 
+app.get('/delivered-data/:unique_id',(req,res)=>{
+    const{unique_id} = req.params;
+    const sqlGetdelivereddata = `SELECT * FROM sent_data WHERE unique_id = ?`;
+    con.query(sqlGetdelivereddata,[unique_id],(err,result)=>{
+        if (err) {
+            res.status(500).send({message:'Internal Server Error in deliveres-data api'});
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.listen(3003,'192.168.1.13',()=>{
     console.log('Server is running on port 3003');
 })

@@ -3,6 +3,7 @@ import '../css/index.css'
 import { FaHome,FaChevronRight,FaEdit,FaTrash,FaExternalLinkAlt, FaBell,FaSignOutAlt} from 'react-icons/fa';
 import Salesperson from './sales-person';
 import Status from './Status';
+import DataStatus from './DataStatus';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from './footer';
 // import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -22,6 +23,8 @@ const Index = () => {
     const[showNotification,setshowNotification] = useState(false);
     const[notification,setnotification] = useState('');
     const[totalinvoice,setTotalinvoice] = useState([]);
+    const[dataDelivery,setDataDelivery] = useState(false);
+    const[successfulleaddata,setsuccessfulleaddata] = useState([]);
     // const sales_person_id = team.unique_id;
     // console.log('Team',team)
     const handleshowNotification = () =>{
@@ -32,6 +35,7 @@ const Index = () => {
         setIndex(false)
         setsalespersonClient(clients)
         setStatus(false);
+        setDataDelivery(false);
     }
     const handleStatus = (inprogresslist,salespersonClient) =>{
         setStatus(true);
@@ -39,8 +43,15 @@ const Index = () => {
         setIndex(false);
         setclientdetails(inprogresslist);
         setsalespersonClient(salespersonClient)
+        setDataDelivery(false);
     }
-
+    const handleDatadelivery =  (successfulleaddata) =>{
+        setDataDelivery(true);
+        setStatus(false);
+        setSalesperson(false);
+        setIndex(false);
+        setsuccessfulleaddata(successfulleaddata);
+    }
     const[formData,setformData] = useState({
         first_name: '',
         last_name: '',
@@ -463,7 +474,7 @@ const Index = () => {
                     }
                     {salesperson&&
                     <div className="mt-4">
-                        <Salesperson salespersonClient={salespersonClient} handleStatus={handleStatus}/>
+                        <Salesperson salespersonClient={salespersonClient} handleStatus={handleStatus} handleDatadelivery={handleDatadelivery}/>
                     </div>
                     }
                     {status&&
@@ -471,7 +482,11 @@ const Index = () => {
                         <Status clientDetails={clientDetails} salespersonClient={salespersonClient} handleSalesperson={handleSalesperson}/>
                     </div>
                     }
-                    
+                    {dataDelivery&&
+                    <div className="mt-4">
+                        <DataStatus salespersonClient={salespersonClient} handleSalesperson={handleSalesperson} successfulleaddata={successfulleaddata}/>
+                    </div>
+                    }
                 </div>
                 <div className="row footer-custom">
                     <Footer/>

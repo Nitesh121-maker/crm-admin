@@ -1,7 +1,8 @@
 import React,{useState,useEffect,useCallback} from 'react'
 import '../css/sales-person.css'
-import { FaPaperPlane } from 'react-icons/fa'
-const Salesperson = ({salespersonClient,handleStatus}) => {
+import { FaPaperPlane,FaExternalLinkAlt } from 'react-icons/fa'
+import { IoSendSharp } from "react-icons/io5";
+const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
     console.log('salespersonClient',salespersonClient)
     const[clientlist, setClientList] = useState('');
     const[clientchat,setclientchat] = useState('');
@@ -164,6 +165,49 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
         }
         getSuccessfulLead();
     }, []);
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      const [dataDelivery, setDataDelivery] = useState({});
+
+      const handleDataDelivery = (index, event) => {
+          const { name, value } = event.target;
+          setDataDelivery(prevState => ({
+              ...prevState,
+              [index]: {
+                  ...prevState[index],
+                  [name]: value
+              }
+          }));
+      };
+  
+      const handleSubmit = async (index, successlead, event) => {
+          event.preventDefault();
+          try {
+              const response = await fetch('http://192.168.1.13:3003/client-data-status', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                      sales_person_id: successlead.sales_person_id,
+                      unique_id: successlead.unique_id,
+                      fullname: successlead.fullname,
+                      month: dataDelivery[index]?.month || '',
+                      message: dataDelivery[index]?.message || ''
+                  })
+              });
+  
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              setDataDelivery({month:'',message:''})
+              // Handle successful response
+          } catch (error) {
+              console.error('Error:', error);
+              // Handle error
+          }
+      };
+  
   return (
     <><div className="row">
           <div className="d-flex col-md-12">
@@ -220,7 +264,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
           </div>
       </div>
       <div className="row mt-4">
-            <div className="collg-12 col-md-12">
+            <div className="col-lg-12 col-md-12">
                 <div className="card">
                     <div className="card-header">
                         <h4 className="card_title text-white ml-3">Sales</h4>
@@ -270,7 +314,7 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                         }
                         {/* Successful Leads */}
                         {successful&&
-                            <div className="successful single-table">
+                            <div className="successful single-table col-lg-12 col-md-12 col-sm-12">
                                 <div className="responsive">
                                     <table className="table table-hover text-white progress-table text-center table">
                                         <thead className="thead-light text-uppercase">
@@ -279,7 +323,9 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Phone</th>
                                                 <th scope='col'>Invoice</th>
+                                                <th scope='col'>Delivered</th>
                                                 <th scope='col'>Action</th>
+                                   
                                             </tr>
                                         </thead>
                                         <tbody className='text-uppercase'>
@@ -291,7 +337,29 @@ const Salesperson = ({salespersonClient,handleStatus}) => {
                                                             <td>{successlead.email}</td>
                                                             <td>{successlead.phone}</td>
                                                             <td>{successlead.invoice_number}</td>
-                                                            <td><button className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary'>Data Deleivery Status</button></td>
+                                                            <td><button className='btn btn-outline-info' onClick={()=>handleDatadelivery(successlead)}><FaExternalLinkAlt/></button></td>
+                                                            <td>
+                                                                <form action="" method="post" class="d-flex" onSubmit={(e) => handleSubmit(index, successlead, e)}>
+                                                                    <select name="month" id="" className='form-control mr-3'
+                                                                     value={dataDelivery.month} 
+                                                                     onChange={(e) => handleDataDelivery(index, e)}
+                                                                     >
+                                                                                <option value="">Select Month</option>
+                                                                        {
+                                                                            monthNames.map((month)=>(
+                                                                                <>
+                                                                                <option value={month}>{month}</option>
+                                                                                </>
+                                                                            ))
+                                                                        }                                                                   
+                                                                    </select>
+                                                                    <input type="text" class="form-control mr-3" name='message'
+                                                                     placeholder='Data Delievey Status'
+                                                                     value={dataDelivery.message} 
+                                                                     onChange={(e) => handleDataDelivery(index, e)}/>
+                                                                    <button type="submit" class="btn-rounded btn-fixed-w mr-2 btn btn-outline-success"><IoSendSharp/></button>
+                                                                </form>
+                                                            </td>
                                                         </tr> 
                                                     ))
                                                 ):(
