@@ -14,8 +14,7 @@ const DataStatus = ({salespersonClient,handleSalesperson,successfulleaddata}) =>
                 const responce = await fetch(`http://192.168.1.13:3003/delivered-data/${unique_id}`);
                 if (!responce.ok) {
                     throw new Error(`HTTP error! Status: ${responce.status} - ${responce.statusText}`);
-                  }
-          
+                  }     
                 const data = await responce.json();
                 console.log('Data',data);
                 setdelivereddata(data);

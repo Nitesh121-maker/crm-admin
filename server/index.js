@@ -121,7 +121,18 @@ app.post('/create-sales-person',(req,res)=>{
         }
    });
 });
-
+// Edit sales person
+app.post('/edit-sales-person',(req,res)=>{
+    const{sales_person_id,password} = req.body;
+    const sqlEdit =  `UPDATE sales_team SET password = ? WHERE sales_person_id = ?)`;
+    con.query(sqlEdit,[password,sales_person_id],(err,result)=>{
+        if (err) {
+            res.status(500).send({message:'Internal Server Error in edit api'})
+        }else{
+            res.status(200).send({message:'Sales Person Edit'})
+        }
+    })
+})
 // Get Team List
 app.get('/sales-team',(req,res)=>{
     const sqlGet = "SELECT * FROM sales_team";

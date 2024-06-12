@@ -207,7 +207,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
               // Handle error
           }
       };
-  
+      let lastMessageDate = null;
   return (
     <><div className="row">
           <div className="d-flex col-md-12">
@@ -235,24 +235,37 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
                       Chat
                   </div>
                   <div className="d-flex card text-white chat-bg chat-card chat-style">
-                      {Array.isArray(clientchat) && clientchat.length ? (
-                          clientchat.map((clientchat) => (
-                              <>
-                                  {clientchat.message &&
-                                      <div className="card-body text-start col-md-10 sales-chat-bg flex-none" style={{ flex: 'none !important' }}>
-                                          <p>{clientchat.message}</p>
-                                          <span className='message-time'>{new Date(clientchat.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                      </div>}
-                                  {clientchat.adminmessage &&
-                                      <div className="card-body text-end col-md-10 ml-auto admin-chat-bg flex-none">
-                                          <p>{clientchat.adminmessage}</p>
-                                          <span className='message-time'>11:42</span>
-                                      </div>}
-                              </>
-                          ))
-                      ) : (
-                          <div className="text-center">No Chat</div>
-                      )}
+                  {Array.isArray(clientchat) && clientchat.length ? (
+                        clientchat.map((chat, index) => {
+                        const currentMessageDate = new Date(chat.sent_at).toLocaleDateString();
+                        const showDateDivider = currentMessageDate !== lastMessageDate;
+                        lastMessageDate = currentMessageDate;
+
+                        return (
+                            <React.Fragment key={index}>
+                            {showDateDivider && (
+                                <div className="date-divider text-center my-3">
+                                <span>{currentMessageDate}</span>
+                                </div>
+                            )}
+                            {chat.message && (
+                                <div className="card-body text-start col-md-10 sales-chat-bg flex-none" style={{ flex: 'none !important' }}>
+                                <p>{chat.message}</p>
+                                <span className='message-time'>{new Date(chat.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                            )}
+                            {chat.adminmessage && (
+                                <div className="card-body text-end col-md-10 ml-auto admin-chat-bg flex-none">
+                                <p>{chat.adminmessage}</p>
+                                <span className='message-time'>{new Date(chat.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                            )}
+                            </React.Fragment>
+                        );
+                        })
+                    ) : (
+                        <div className="text-center">No Chat</div>
+                    )}
                   </div>
                   <div className="card-footer">
                       <form action="" className='d-flex' onSubmit={handleSendMessage}>
@@ -315,8 +328,8 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
                         {/* Successful Leads */}
                         {successful&&
                             <div className="successful single-table col-lg-12 col-md-12 col-sm-12">
-                                <div className="responsive">
-                                    <table className="table table-hover text-white progress-table text-center table">
+                                <div className="table-responsive">
+                                    <table className="table table-hover text-white progress-table text-center">
                                         <thead className="thead-light text-uppercase">
                                             <tr>
                                                 <th scope="col">Name</th>
@@ -325,48 +338,47 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
                                                 <th scope='col'>Invoice</th>
                                                 <th scope='col'>Delivered</th>
                                                 <th scope='col'>Action</th>
-                                   
                                             </tr>
                                         </thead>
                                         <tbody className='text-uppercase'>
-                                            {
-                                                Array.isArray(successfullead) && successfullead.length >0 ?(
-                                                    successfullead.map((successlead,index)=>(
-                                                        <tr>
-                                                            <td>{successlead.fullname}</td>
-                                                            <td>{successlead.email}</td>
-                                                            <td>{successlead.phone}</td>
-                                                            <td>{successlead.invoice_number}</td>
-                                                            <td><button className='btn btn-outline-info' onClick={()=>handleDatadelivery(successlead)}><FaExternalLinkAlt/></button></td>
-                                                            <td>
-                                                                <form action="" method="post" class="d-flex" onSubmit={(e) => handleSubmit(index, successlead, e)}>
-                                                                    <select name="month" id="" className='form-control mr-3'
-                                                                     value={dataDelivery.month} 
-                                                                     onChange={(e) => handleDataDelivery(index, e)}
-                                                                     >
-                                                                                <option value="">Select Month</option>
-                                                                        {
-                                                                            monthNames.map((month)=>(
-                                                                                <>
-                                                                                <option value={month}>{month}</option>
-                                                                                </>
-                                                                            ))
-                                                                        }                                                                   
-                                                                    </select>
-                                                                    <input type="text" class="form-control mr-3" name='message'
-                                                                     placeholder='Data Delievey Status'
-                                                                     value={dataDelivery.message} 
-                                                                     onChange={(e) => handleDataDelivery(index, e)}/>
-                                                                    <button type="submit" class="btn-rounded btn-fixed-w mr-2 btn btn-outline-success"><IoSendSharp/></button>
-                                                                </form>
-                                                            </td>
-                                                        </tr> 
-                                                    ))
-                                                ):(
-                                                    <tr>No Data in Successful</tr>
-                                                )
-                                            }
-
+                                            {Array.isArray(successfullead) && successfullead.length > 0 ? (
+                                                successfullead.map((successlead, index) => (
+                                                    <tr key={index}>
+                                                        <td>{successlead.fullname}</td>
+                                                        <td>{successlead.email}</td>
+                                                        <td>{successlead.phone}</td>
+                                                        <td>{successlead.invoice_number}</td>
+                                                        <td>
+                                                            <button className='btn btn-outline-info' onClick={() => handleDatadelivery(successlead)}>
+                                                                <FaExternalLinkAlt />
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <form action="" method="post" className="d-flex" onSubmit={(e) => handleSubmit(index, successlead, e)}>
+                                                                <select name="month" className='form-control mr-3'
+                                                                    value={dataDelivery.month}
+                                                                    onChange={(e) => handleDataDelivery(index, e)}>
+                                                                    <option value="">Select Month</option>
+                                                                    {monthNames.map((month, monthIndex) => (
+                                                                        <option value={month} key={monthIndex}>{month}</option>
+                                                                    ))}
+                                                                </select>
+                                                                <input type="text" className="form-control mr-3 custom-placeholder" name='message'
+                                                                    placeholder='Data Delivery Status'
+                                                                    value={dataDelivery.message}
+                                                                    onChange={(e) => handleDataDelivery(index, e)} />
+                                                                <button type="submit" className="btn-rounded btn-fixed-w mr-2 btn btn-outline-success">
+                                                                    <IoSendSharp />
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="6">No Data in Successful</td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>

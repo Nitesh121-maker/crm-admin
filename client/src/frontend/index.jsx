@@ -6,11 +6,12 @@ import Status from './Status';
 import DataStatus from './DataStatus';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from './footer';
+import { useNavigate } from 'react-router-dom';
 // import "bootstrap/dist/js/bootstrap.bundle.min";
 
 
 const Index = () => {
-
+    const navigate = useNavigate();
     const[team, setTeam] = useState(['']);
     const[message, setMessage] = useState("");
     const[index,setIndex] = useState(true);
@@ -215,6 +216,26 @@ const Index = () => {
     handleUpdateSeen(notification);
     handleStatus(notification)
    }
+
+   const handleLogout = async () => {
+    // console.log('Button Clicked');
+    try {
+        const response = await fetch('http://192.168.1.13:3003/admin-logout', {
+            method: 'POST', // Change to POST
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        if (data.message === 'Logout Successful.') {
+            sessionStorage.removeItem('email');
+            sessionStorage.removeItem('password');
+            navigate('/erp-admin-login');
+        }
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+}
   return (
     <>
        {
@@ -314,7 +335,7 @@ const Index = () => {
                                     </div>
                                     }
                                 </li>
-                                <li className='user-dropdown me-auto-custom'>
+                                <li className='user-dropdown me-auto-custom' onClick={handleLogout}>
                                     <FaSignOutAlt/>
                                 </li>
                             </ul>
