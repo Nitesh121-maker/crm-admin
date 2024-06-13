@@ -39,7 +39,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
         const getClient = async () => {
             if (!sales_unique_id) return;
             try {
-                const response = await fetch(`http://192.168.1.13:3003/client-list/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.10:3003/client-list/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -56,7 +56,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
     const getChat = useCallback(async(unique_id) =>{
         
         try {
-            const response = await fetch(`http://192.168.1.13:3003/client-chat/${unique_id}`);
+            const response = await fetch(`http://192.168.1.10:3003/client-chat/${unique_id}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -93,7 +93,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
     const handleSendMessage = async(e)=>{
         e.preventDefault();
         try {
-            const response = await fetch(`http://192.168.1.13:3003/admin-message/${selectedClientId}`,{
+            const response = await fetch(`http://192.168.1.10:3003/admin-message/${selectedClientId}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
       if(!sales_unique_id) return;
       const getInprogress = async (e) =>{
         try {
-            const response = await fetch(`http://192.168.1.13:3003/sales-person-in-progress/${sales_unique_id}`);
+            const response = await fetch(`http://192.168.1.10:3003/sales-person-in-progress/${sales_unique_id}`);
             if(!response.ok){
                 throw new Error('Network response was not ok');
             }
@@ -136,7 +136,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
         if (!sales_unique_id) return;
         const getClosedlead = async(e) =>{
             try {
-                const response = await fetch(`http://192.168.1.13:3003/sales-person-closed-client/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.10:3003/sales-person-closed-client/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                     }
@@ -152,7 +152,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
     useEffect(() => {
         const getSuccessfulLead = async()=>{
             try {
-                const response = await fetch(`http://192.168.1.13:3003/successful-lead-data/${sales_unique_id}`);
+                const response = await fetch(`http://192.168.1.10:3003/successful-lead-data/${sales_unique_id}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                     }
@@ -185,7 +185,7 @@ const Salesperson = ({salespersonClient,handleStatus,handleDatadelivery}) => {
       const handleSubmit = async (index, successlead, event) => {
           event.preventDefault();
           try {
-              const response = await fetch('http://192.168.1.13:3003/client-data-status', {
+              const response = await fetch('http://192.168.1.10:3003/client-data-status', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({

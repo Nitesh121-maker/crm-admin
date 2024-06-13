@@ -11,7 +11,7 @@ const DataStatus = ({salespersonClient,handleSalesperson,successfulleaddata}) =>
     useEffect(() => {
         const getDelivereddata = async(e) =>{
             try {
-                const responce = await fetch(`http://192.168.1.13:3003/delivered-data/${unique_id}`);
+                const responce = await fetch(`http://192.168.1.10:3003/delivered-data/${unique_id}`);
                 if (!responce.ok) {
                     throw new Error(`HTTP error! Status: ${responce.status} - ${responce.statusText}`);
                   }     
@@ -46,6 +46,7 @@ const DataStatus = ({salespersonClient,handleSalesperson,successfulleaddata}) =>
                                     <th scope='col'>Name</th>
                                     <th scope='col'>Month</th>
                                     <th scope='col'>Message</th>
+                                    <th scope='col'>Sent At</th>
                                 </tr>
                             </thead>
                             <tbody className="text-uppercase">
@@ -56,6 +57,7 @@ const DataStatus = ({salespersonClient,handleSalesperson,successfulleaddata}) =>
                                                 <td>{delivereddata.fullname}</td>
                                                 <td>{delivereddata.month}</td>
                                                 <td>{delivereddata.message}</td>
+                                                <td>{delivereddata.created_at}</td>
                                             </tr>
                                         ))
                                     ):(

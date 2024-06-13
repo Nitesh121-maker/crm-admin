@@ -7,6 +7,9 @@ import DataStatus from './DataStatus';
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from './footer';
 import { useNavigate } from 'react-router-dom';
+import TotalSale from './TotalSale';
+import TotalClosedLead from './TotalClosedLead';
+import TotalGeneratedInvoice from './TotalGeneratedInvoice';
 // import "bootstrap/dist/js/bootstrap.bundle.min";
 
 
@@ -26,6 +29,9 @@ const Index = () => {
     const[totalinvoice,setTotalinvoice] = useState([]);
     const[dataDelivery,setDataDelivery] = useState(false);
     const[successfulleaddata,setsuccessfulleaddata] = useState([]);
+    const[totalSaletable,settotalsaletable] = useState(false);
+    const[totalClosedtable,settotalClosedtable] = useState(false);
+    const[totalGeneratedInvoice,settotalGeneratedInvoice] = useState(false);
     // const sales_person_id = team.unique_id;
     // console.log('Team',team)
     const handleshowNotification = () =>{
@@ -53,6 +59,34 @@ const Index = () => {
         setIndex(false);
         setsuccessfulleaddata(successfulleaddata);
     }
+    // Handle Total Sale Table
+    const handleTotalsaletable = () =>{
+        settotalsaletable(true);
+        setDataDelivery(false);
+        setStatus(false);
+        setSalesperson(false);
+        setIndex(false);
+    }
+    // Handle Total Closed Table
+    const handleTotalclosed =()=>{
+        settotalClosedtable(true);
+        settotalsaletable(false);
+        setDataDelivery(false);
+        setStatus(false);
+        setSalesperson(false);
+        setIndex(false);
+        settotalGeneratedInvoice(false);
+    }
+    // Handle Total Generated Invoice
+    const handleTotalgenerated =()=>{
+        settotalGeneratedInvoice(true);
+        settotalClosedtable(false);
+        settotalsaletable(false);
+        setDataDelivery(false);
+        setStatus(false);
+        setSalesperson(false);
+        setIndex(false);
+    }
     const[formData,setformData] = useState({
         first_name: '',
         last_name: '',
@@ -66,7 +100,7 @@ const Index = () => {
         e.preventDefault();
         console.log('Form Data',formData);
         try {
-            const response = await fetch('http://192.168.1.13:3003/create-sales-person',{
+            const response = await fetch('http://192.168.1.10:3003/create-sales-person',{
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body:JSON.stringify(formData)
@@ -83,7 +117,7 @@ const Index = () => {
     useEffect(() => {
         const getTeam = async() =>{
             try {
-                const response = await fetch('http://192.168.1.13:3003/sales-team');
+                const response = await fetch('http://192.168.1.10:3003/sales-team');
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`)
                 }
@@ -99,7 +133,7 @@ const Index = () => {
    useEffect(() => {
       const getTotal = async(e) =>{
         try {
-            const response = await fetch('http://192.168.1.13:3003/total-sale');
+            const response = await fetch('http://192.168.1.10:3003/total-sale');
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`)
             }
@@ -116,7 +150,7 @@ const Index = () => {
    useEffect(() => {
       const getTotalclosed = async()=>{
         try {
-            const responce = await fetch('http://192.168.1.13:3003/total-closed-lead');
+            const responce = await fetch('http://192.168.1.10:3003/total-closed-lead');
             if (!responce.ok) {
                 throw new Error(`HTTP error! Status: ${responce.status}`)
                 }
@@ -136,7 +170,7 @@ const Index = () => {
    useEffect(()=>{
     const getTotalinvoice = async () =>{
         try {
-            const responce = await fetch('http://192.168.1.13:3003/total-generated-invoice');
+            const responce = await fetch('http://192.168.1.10:3003/total-generated-invoice');
             if (!responce.ok) {
                 throw new Error(`HTTP error! Status: ${responce.status} - ${responce.statusText}`);
             }
@@ -153,7 +187,7 @@ const Index = () => {
    useEffect(() => {
     const getNotification = async () => {
       try {
-        const response = await fetch('http://192.168.1.13:3003/notification');
+        const response = await fetch('http://192.168.1.10:3003/notification');
         
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
@@ -185,7 +219,7 @@ const Index = () => {
     const unique_id = notification.unique_id;
     console.log('Unique Id', unique_id);
     try {
-      const response = await fetch(`http://192.168.1.13:3003/update-seen/${unique_id}`, {
+      const response = await fetch(`http://192.168.1.10:3003/update-seen/${unique_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -220,7 +254,7 @@ const Index = () => {
    const handleLogout = async () => {
     // console.log('Button Clicked');
     try {
-        const response = await fetch('http://192.168.1.13:3003/admin-logout', {
+        const response = await fetch('http://192.168.1.10:3003/admin-logout', {
             method: 'POST', // Change to POST
             headers: {
                 'Content-Type': 'application/json'
@@ -364,7 +398,7 @@ const Index = () => {
                     </div>
                     {index &&
                     <><div className="mt-4-row">
-                            <div className="stretched-card">
+                            <div className="stretched-card" onClick={handleTotalsaletable}>
                                 <div className="card bg-primary">
                                     <div className="card-body">
                                         <div className="card-content">
@@ -376,7 +410,7 @@ const Index = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="stretched-card">
+                            <div className="stretched-card" onClick={handleTotalclosed}>
                                 <div className="card bg-success">
                                     <div className="card-body">
                                         <div className="card-content">
@@ -388,7 +422,7 @@ const Index = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="stretched-card">
+                            <div className="stretched-card" onClick={handleTotalgenerated}>
                                 <div className="bg-dark card ">
                                     <div className="card-body">
                                         <div className="card-content">
@@ -506,6 +540,21 @@ const Index = () => {
                     {dataDelivery&&
                     <div className="mt-4">
                         <DataStatus salespersonClient={salespersonClient} handleSalesperson={handleSalesperson} successfulleaddata={successfulleaddata}/>
+                    </div>
+                    }
+                    {totalSaletable&&
+                    <div className="mt-4">
+                        <TotalSale totalsale={total}/>
+                    </div>
+                    }
+                    {totalClosedtable&&
+                    <div className="mt-4">
+                        <TotalClosedLead totalclosed={totalclosed}/>
+                    </div>
+                    }
+                    {totalGeneratedInvoice&&
+                    <div className="mt-4">
+                        <TotalGeneratedInvoice totalinvoice={totalinvoice}/>
                     </div>
                     }
                 </div>

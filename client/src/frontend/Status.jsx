@@ -28,7 +28,7 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
         e.preventDefault();
        
         try {
-            const responce = await fetch('http://192.168.1.13:3003/successful-lead',{
+            const responce = await fetch('http://192.168.1.10:3003/successful-lead',{
                 method:'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({               
@@ -65,7 +65,7 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
     useEffect(() => {
         const getclientInvoice = async(e) =>{
             try {
-                const response = await fetch(`http://192.168.1.13:3003/client-invoice/${unique_id}`);
+                const response = await fetch(`http://192.168.1.10:3003/client-invoice/${unique_id}`);
                 if(!response.ok){
                     throw new Error('Network response was not ok');
                 }
@@ -89,7 +89,7 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                     </div>
                     <div className="col-lg-2">
                         <button className='ml-3 btn btn-primary' onClick={handleButtonClick}>
-                        <FaArrowLeft/>
+                          <FaArrowLeft/>
                         </button>
                     </div>
                     <div className="card-body d-flex">
@@ -133,7 +133,7 @@ const Status = ({salespersonClient,clientDetails,handleSalesperson}) => {
                                                                         {
                                                                             invoice.status == 'Sent' ?(
                                                                                 <td>
-                                                                                    <a href={`http://192.168.1.13:3002/downloads/${invoice.unique_id}.pdf`} 
+                                                                                    <a href={`http://192.168.1.10:3002/downloads/${invoice.unique_id}.pdf`} 
                                                                                     className='btn-rounded btn-fixed-w mb-3 mr-2 btn btn-outline-primary' 
                                                                                     target="_blank" 
                                                                                     rel="noopener noreferrer">

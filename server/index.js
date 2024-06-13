@@ -375,6 +375,6 @@ app.get('/delivered-data/:unique_id',(req,res)=>{
         }
     })
 })
-app.listen(3003,'192.168.1.13',()=>{
+app.listen(3003,'192.168.1.10',()=>{
     console.log('Server is running on port 3003');
 })

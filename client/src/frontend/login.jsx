@@ -18,7 +18,7 @@ const Login = () => {
         console.log(loginForm)
         e.preventDefault();
         try {
-            const responce = await fetch('http://192.168.1.13:3003/admin-login',{
+            const responce = await fetch('http://192.168.1.10:3003/admin-login',{
                 method:'POST',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify(loginForm)
